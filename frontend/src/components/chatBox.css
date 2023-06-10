@@ -1,0 +1,19 @@
+.chatbox-messages{
+    max-height: 20vh;
+    overflow-y:scroll;
+    
+}
+
+.sendButton{
+    color:white;
+    background-color: #008000;
+    border-color: #008000;
+    float: left;
+    border: 1px solid #008000;
+    border-radius: 10px;
+}
+
+.chatbox-input{
+    width: 100%;
+    border: 1px solid #008000;
+}
