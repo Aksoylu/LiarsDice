@@ -9,10 +9,10 @@ interface UserCardProps{
   colorPalette: ColorPalette;
   isTurn: boolean;
   bid: Bid;
-
+  isEliminated: boolean;
 }
 
-const UserCard: React.FC<UserCardProps> = ({username, colorPalette, isTurn, bid}) => {
+const UserCard: React.FC<UserCardProps> = ({username, colorPalette, isTurn, bid, isEliminated}) => {
 
   const firstLetter = username[0].toUpperCase();
 
@@ -22,12 +22,13 @@ const UserCard: React.FC<UserCardProps> = ({username, colorPalette, isTurn, bid}
   }
 
   const usernameStyle = {
-    color: colorPalette.backgroundColor
+    color: colorPalette.backgroundColor,
+    textDecoration: isEliminated ? "line-through": "none",
   }
 
   return (
     <div>
-       <div className={` ${isTurn ? 'turnRibbon' : ''} card`}>
+       <div className={`${isTurn ? 'turnRibbon' : ''} ${isEliminated ? 'eliminatedRibbon' : ''} card`}>
 
 
        <div className="row card-row">

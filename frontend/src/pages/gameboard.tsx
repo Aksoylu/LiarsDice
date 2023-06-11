@@ -34,10 +34,8 @@ const createRandomPalettes = (count:number) => {
 
 const GameBoard: React.FC<GameboardProps> = ({ username, room_id}) => {
 
-
   const randomPalettes = createRandomPalettes(6);
 
-  console.log(randomPalettes);
   const exampleBid:Bid = {
     dice: 6,
     quality: 3
@@ -53,15 +51,21 @@ const GameBoard: React.FC<GameboardProps> = ({ username, room_id}) => {
       <div className="board-container">
   
           <div className="row">
-            <div className='col-4'><UserCard username='veli' colorPalette={randomPalettes[0]} isTurn={true} bid={exampleBid}/></div>
-            <div className='col-4'><UserCard username='mehmet' colorPalette={randomPalettes[1]} isTurn={false} bid={exampleBid}/></div>
-            <div className='col-4'><UserCard username='murat' colorPalette={randomPalettes[2]} isTurn={false} bid={exampleBid}/></div>
+            <div className='col-4'>
+              <UserCard username='veli' colorPalette={randomPalettes[0]} isTurn={true} bid={exampleBid} isEliminated={false}/></div>
+            <div className='col-4'>
+              <UserCard username='mehmet' colorPalette={randomPalettes[1]} isTurn={false} bid={exampleBid} isEliminated={false}/></div>
+            <div className='col-4'>
+              <UserCard username='murat' colorPalette={randomPalettes[2]} isTurn={false} bid={exampleBid} isEliminated={false}/></div>
           </div>
           <br/>
           <div className="row">
-          <div className='col-4'><UserCard username='beyza' colorPalette={randomPalettes[3]} isTurn={false} bid={exampleBid}/></div>
-          <div className='col-4'><UserCard username='elif' colorPalette={randomPalettes[4]} isTurn={false} bid={exampleBid}/></div>
-          <div className='col-4'><UserCard username='gamze' colorPalette={randomPalettes[5]} isTurn={false} bid={exampleBid}/></div>
+          <div className='col-4'>
+            <UserCard username='beyza' colorPalette={randomPalettes[3]} isTurn={false} bid={exampleBid} isEliminated={false}/></div>
+          <div className='col-4'>
+            <UserCard username='elif' colorPalette={randomPalettes[4]} isTurn={false} bid={exampleBid} isEliminated={false}/></div>
+          <div className='col-4'>
+            <UserCard username='gamze' colorPalette={randomPalettes[5]} isTurn={false} bid={exampleBid} isEliminated={true}/></div>
           </div>
           <br/>
       </div>
