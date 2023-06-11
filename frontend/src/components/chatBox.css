@@ -1,7 +1,6 @@
 .chatbox-messages{
     max-height: 20vh;
     overflow-y:scroll;
-    
 }
 
 .sendButton{

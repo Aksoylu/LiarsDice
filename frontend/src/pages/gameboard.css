@@ -24,11 +24,13 @@ body {
     padding: 10px;
 }
 
-.container {
+.board-container {
   width: 100%;
-  max-width: 960px;
-  margin: 0 auto;
-  padding: 0 15px;
+  max-width: 80%;
+  left:30px;
+  top:100px;
+  position: fixed;
+  background-color: transparent;
 }
 
 .row {
@@ -45,4 +47,14 @@ body {
 .col-6 {
   width: calc(50% - 30px);
   padding: 0 15px;
+}
+
+.info-text{
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 24px;
+  color: black;
+  z-index: 999;
 }

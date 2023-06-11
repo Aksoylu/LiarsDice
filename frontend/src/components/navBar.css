@@ -10,6 +10,7 @@
     color: #fff;
     padding: 10px;
     z-index: 9999;
+    max-height: 120px;
 }
 
 .navbar-logo {

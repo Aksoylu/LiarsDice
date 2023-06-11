@@ -1,9 +1,12 @@
 .card {
-    width: 300px;
+    width: 100%;
     padding: 20px;
     border-radius: 6px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     background-color: #ffffff;
+    position: relative;
+    border: 1px solid #BBB;
+    display: inline-block;
   }
   
   .card-title {
@@ -24,7 +27,68 @@
     text-decoration: none;
   }
   
-  .card-link:hover {
-    text-decoration: underline;
-  }
-  
+.card-link:hover {
+  text-decoration: underline;
+}
+
+.profile-circle {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.letter {
+  font-size: 24px;
+  font-weight: bold;
+}
+
+.card-username{
+  display: flex;
+  align-items: center;
+  top: 0;
+  bottom: 0;
+  height: 100%;
+  font-size: 24px;
+}
+
+.turnRibbon:before {
+  content: "";
+  z-index: -1;
+  overflow: hidden;
+  transform: rotate(-135deg);
+  width: 120px;
+  display: block; 
+  background: #79A70A;
+  background: linear-gradient(#9BC90D 0%, #79A70A 100%);
+  box-shadow: 0 3px 10px -5px rgba(0, 0, 0, 1);
+  position: absolute;
+  top: 34px;
+  right: -16px;
+  clip-path: polygon(120px 20px, 90px -10px, 30px -10px, 0px 20px, 10px 30px,  110px 30px);
+  height: 20px;
+  width: 120px;
+}
+
+.turnRibbon:after {
+  content: "Turn";
+  z-index: 1;
+  overflow: hidden;
+  font-size: 10px;
+  font-weight: bold;
+  color: #FFF;
+  text-transform: uppercase;
+  text-align: center;
+  line-height: 20px;
+  transform: rotate(45deg);
+  width: 120px;
+  display: block; 
+  background: #79A70A;
+  background: linear-gradient(#9BC90D 0%, #79A70A 100%);
+  box-shadow: 0 3px 10px -5px rgba(0, 0, 0, 1);
+  position: absolute;
+  top: 20px; right: -30px;
+  clip-path: polygon(120px 20px, 90px -10px, 30px -10px, 0px 20px, 10px 30px,  110px 30px)
+}
