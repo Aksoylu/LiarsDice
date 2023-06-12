@@ -14,7 +14,6 @@ const Navbar: React.FC = () => {
                 
                 <li className="navbar-menu-item" ><FontAwesomeIcon icon={faCircleInfo} /> How to play</li>
                 <li className="navbar-menu-item"><FontAwesomeIcon icon={faLanguage} /> Language</li>
-
                 <li className="navbar-menu-item"><FontAwesomeIcon icon={faRightFromBracket} /> Exit Room</li>
             </ul>
         

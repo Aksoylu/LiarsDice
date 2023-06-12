@@ -7,6 +7,7 @@ import ChatBox from '../components/chatBox';
 import Navbar from '../components/navBar';
 import UserCard from '../components/userCard';
 import Signal from '../components/signal';
+import ActionPanel from '../components/actionPanel';
 
 import {ColorPalette} from "../types/ColorPalette";
 import {Bid} from "../types/Bid";
@@ -37,7 +38,7 @@ const createRandomPalettes = (count:number) => {
 
 const pushSignal = (username:string) => {
   
-  const type = GameSignals.game_started;
+  const type = null;
 
   if(type == GameSignals.game_started)
   {
@@ -79,9 +80,6 @@ const pushSignal = (username:string) => {
     const signalMessage = "You Lose !";
     return <Signal type={GameSignals.you_lose} text={signalMessage}/>;
   }
-      // return <Signal type={GameSignals.your_turn} text={signalMessage}/>;
-
-
 }
 
 const GameBoard: React.FC<GameboardProps> = ({ username, room_id}) => {
@@ -122,8 +120,14 @@ const GameBoard: React.FC<GameboardProps> = ({ username, room_id}) => {
             <UserCard username='gamze' colorPalette={randomPalettes[5]} isTurn={false} bid={exampleBid} isEliminated={true}/></div>
           </div>
           <br/>
+          <div className="row">
+            <div className='col-12'>
+              <ActionPanel username={username} isTurn={true} isEliminated={false}/>
+            </div>
+          </div>
       </div>
-      <ChatBox />
+
+      <ChatBox/>
     </div>
   );
 };
