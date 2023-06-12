@@ -26,14 +26,20 @@ body {
 }
 
 .actionPanel {
-  width: 100%;
-  bottom: 0px;
-}
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+    bottom: 0px;
+    left: 0;
+    right: 0;
+    width: calc(100% - 90px);
+  }
 
 .board-container {
   width: 75vw;
   left:30px;
   top:100px;
+  bottom:0px;
   position: fixed;
   background-color: transparent;
 }
