@@ -22,3 +22,15 @@ export const colorPaletteList = [
     { "backgroundColor": "#01FF70", "foregroundColor": "#B10DC9" },
     { "backgroundColor": "#85144B", "foregroundColor": "#FF851B" }
 ];
+
+export const GameSignals = {
+    game_started: 0,
+    your_turn : 1,
+    bluffed: 2,
+    busted: 3,
+    player_win: 5,
+    player_eliminated: 7,
+    you_lose: 8
+
+};
+  
