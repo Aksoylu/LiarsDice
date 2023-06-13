@@ -28,14 +28,17 @@ const WelcomeWithRoomId: React.FC = () => {
 
 const GameboardwithRoomId: React.FC = () => {
   const { room_id } = useParams();
-  const username = "ümit";
 
+  const auth_hash = localStorage.getItem('auth_hash') ?? null;
+  const username = localStorage.getItem('username') ?? null;
+  const user_lang = localStorage.getItem('user_lang') ?? "en";
+  console.log("room_id >", room_id, username);
   if(!room_id || !username)
   {
     return <h1>siktir</h1>;
   }
 
-  return <GameBoard username={username} room_id={room_id} />;
+  return <GameBoard username={username} auth_hash={auth_hash} room_id={room_id} user_lang={user_lang}/>;
 };
 
 export default App;

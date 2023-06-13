@@ -33,7 +33,6 @@ const Welcome: React.FC<WelcomeProps> = ({room_id }) => {
   const username = localStorage.getItem('username') ?? "";
 
   const translation = getTranslationInstance(user_lang);
-  console.log("translation >", translation);
 
   if(room_id != null && room_id.toString().length > 0)
   {

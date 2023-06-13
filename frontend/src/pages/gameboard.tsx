@@ -1,5 +1,4 @@
 import React from 'react';
-
 import svgImage from '../assets/board.svg';
 import "./gameboard.css";
 
@@ -13,10 +12,13 @@ import {ColorPalette} from "../types/ColorPalette";
 import {Bid} from "../types/Bid";
 
 import {colorPaletteList, GameSignals} from "../constants";
+const {getTranslationInstance} = require("../translations/translate");
 
 interface GameboardProps {
   username: string;
+  auth_hash: string|null;
   room_id: string;
+  user_lang: string;
 }
 
 
@@ -82,8 +84,10 @@ const pushSignal = (username:string) => {
   }
 }
 
-const GameBoard: React.FC<GameboardProps> = ({ username, room_id}) => {
+const GameBoard: React.FC<GameboardProps> = ({ username, auth_hash, room_id, user_lang}) => {
 
+  const translation = getTranslationInstance(user_lang);
+  
   const randomPalettes = createRandomPalettes(6);
 
   const exampleBid:Bid = {
@@ -122,7 +126,7 @@ const GameBoard: React.FC<GameboardProps> = ({ username, room_id}) => {
           <br/>
           <div className="row">
             <div className='col-12'>
-              <ActionPanel username={username} isTurn={true} isEliminated={false}/>
+              <ActionPanel username={username} isTurn={true} isEliminated={false} userLang={user_lang}/>
             </div>
           </div>
       </div>

@@ -18,7 +18,17 @@ const ENGLISH = {
     "do_you_want_to_join_room": "Do you want to join existing room ?",
     "is_someone_waiting_you": "Is there anybody waiting for you ? Do not make them angry. Join existing play room by here.",
 
-    
+    "title_choose_your_bet": "Declare your bet",
+    "title_lastest_bet": "Lastest bet",
+    "subtitle_lastest_bet": "You should declare equal or higher amounted bet. Or you can call bluff for lastest declared bet.",
+    "title_action": "Actions",
+    "title_bet_amount": "Amount",
+    "title_bet_dice": "Dice",
+
+
+    "button_declare_bet": "Declare Your Bet",
+    "button_call_bluff": "Call Bluff",
+
 }
 
 module.exports = ENGLISH
