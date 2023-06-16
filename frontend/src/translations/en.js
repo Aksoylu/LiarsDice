@@ -29,6 +29,9 @@ const ENGLISH = {
     "button_declare_bet": "Declare Your Bet",
     "button_call_bluff": "Call Bluff",
 
+    "error_message_screen_size_not_compatible": "Screen size is not compatible. You need least 900x700 display for playing Liar's Dice",
+    
+
 }
 
 module.exports = ENGLISH

@@ -1,15 +1,36 @@
-import React from 'react';
+// @ts-check
+
+import React, {useEffect, useState} from 'react';
 import './App.css';
 import { BrowserRouter as Router, Route, Routes, useParams } from 'react-router-dom';
+import {AllowedPageSize, ErrorPageTypes} from './constants';
 
 import Welcome from './pages/welcome';
 import GameBoard from './pages/gameboard';
 import About from './pages/about';
-
-// TODO: EN KÜÇÜK OYNANABİLİR BOYUT SINIRI : 900 W 700 H
-// TODO:UYARI VER EKRAN UYUMSUZ. CİHAZINI YAN ÇEVİR VEYA PC DE OYNA
+import Error from './pages/error';
 
 const App: React.FC = () => {
+
+  const [isScreenSizeCompatible, setIsScreenSizeCompatible] = useState(false);
+
+  const checkPageSize = () => {
+    setIsScreenSizeCompatible((window.innerWidth < AllowedPageSize.minimumWidth || window.innerHeight < AllowedPageSize.minimumHeight))
+  }
+
+  useEffect(() => {
+    window.addEventListener('resize', checkPageSize);
+
+    return () => {
+      window.removeEventListener('resize', checkPageSize);
+    };
+  }, []);
+
+  if(isScreenSizeCompatible)
+  {
+    return (<Error errorType={ErrorPageTypes.screenSizeNotCompatible}/>);
+  }
+
   return (
     <Router>
       <Routes>

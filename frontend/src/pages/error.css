@@ -1,0 +1,25 @@
+.errorBody{
+    background: -webkit-linear-gradient(to right, #0caa49, #067506);
+	background: linear-gradient(to right, #0caa49, #067506);
+	background-repeat: no-repeat;
+	background-size: cover;
+	background-position: 0 0;
+	color: #FFFFFF;
+	width: 100vw;
+	height: 100vh;
+}
+
+.errorContainer {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	height: 100vh;
+	text-align: center;
+	margin-left: 5%;
+	margin-right: 5%;
+
+  }
+
+.errorLogo{
+	margin-bottom: 32px;
+}

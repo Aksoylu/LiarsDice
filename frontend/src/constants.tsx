@@ -33,4 +33,12 @@ export const GameSignals = {
     you_lose: 8
 
 };
-  
+
+export const AllowedPageSize = {
+    minimumWidth: 900,
+    minimumHeight: 700
+};
+
+export const ErrorPageTypes = {
+    screenSizeNotCompatible: 1
+};
