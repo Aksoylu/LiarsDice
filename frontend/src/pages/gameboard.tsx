@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import svgImage from '../assets/board.svg';
 import "./gameboard.css";
 
@@ -84,11 +84,19 @@ const pushSignal = (username:string) => {
   }
 }
 
-const GameBoard: React.FC<GameboardProps> = ({ username, auth_hash, room_id, user_lang}) => {
+const renderActionPanel = (username:string, isUserEliminated:boolean, isActionPanelVisible:boolean, language:string) => {
+  return (<ActionPanel username={username} isActionPanelVisible={isActionPanelVisible} isUserEliminated={false} userLang={language}/>);
+}
 
+const GameBoard: React.FC<GameboardProps> = ({ username, auth_hash, room_id, user_lang}) => {
   const translation = getTranslationInstance(user_lang);
-  
   const randomPalettes = createRandomPalettes(6);
+
+  const [isTurn, setIsTurn] = useState(false);
+  // TODO REMOVE
+  (window as any).setIsTurn = function(value:boolean){
+    setIsTurn(value);
+  }
 
   const exampleBid:Bid = {
     dice: 6,
@@ -126,7 +134,7 @@ const GameBoard: React.FC<GameboardProps> = ({ username, auth_hash, room_id, use
           <br/>
           <div className="row">
             <div className='col-12'>
-              <ActionPanel username={username} isTurn={true} isEliminated={false} userLang={user_lang}/>
+              {renderActionPanel(username,false,isTurn, user_lang)}
             </div>
           </div>
       </div>

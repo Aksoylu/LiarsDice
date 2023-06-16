@@ -58,3 +58,12 @@
     clip-path: polygon(120px 20px, 90px -10px, 30px -10px, 0px 20px, 10px 30px,  110px 30px)
   }
   
+  .absolute {
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+    bottom: 0px;
+    left: 0;
+    right: 0;
+    width: calc(100% - 90px);
+  }
