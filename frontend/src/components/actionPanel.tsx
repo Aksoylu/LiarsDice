@@ -26,7 +26,6 @@ const ActionPanel: React.FC<ActionPanelProps> = ({username, isTurn, isEliminated
                   <InputSpinner minimumValue={2}/>
                 </div>
 
-
                 <div className='col-4 '></div>
 
                 <div className='col-4 '>

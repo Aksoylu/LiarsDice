@@ -6,6 +6,9 @@ import Welcome from './pages/welcome';
 import GameBoard from './pages/gameboard';
 import About from './pages/about';
 
+// TODO: EN KÜÇÜK OYNANABİLİR BOYUT SINIRI : 900 W 700 H
+// TODO:UYARI VER EKRAN UYUMSUZ. CİHAZINI YAN ÇEVİR VEYA PC DE OYNA
+
 const App: React.FC = () => {
   return (
     <Router>
