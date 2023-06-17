@@ -42,3 +42,8 @@ export const AllowedPageSize = {
 export const ErrorPageTypes = {
     screenSizeNotCompatible: 1
 };
+
+export const InfoActionPanelStates = {
+    waitingForGameStart: 1,
+    userEliminated: 2
+}

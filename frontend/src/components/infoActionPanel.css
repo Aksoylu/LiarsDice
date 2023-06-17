@@ -1,0 +1,86 @@
+
+.eliminatedRibbon:before {
+    content: "";
+    z-index: -1;
+    overflow: hidden;
+    transform: rotate(-135deg);
+    width: 120px;
+    display: block; 
+    background: #79A70A;
+    background: linear-gradient(#c90d0d 0%, #e54418 100%);
+    box-shadow: 0 3px 10px -5px rgba(0, 0, 0, 1);
+    position: absolute;
+    top: 34px;
+    right: -16px;
+    clip-path: polygon(120px 20px, 90px -10px, 30px -10px, 0px 20px, 10px 30px,  110px 30px);
+    height: 20px;
+    width: 120px;
+  }
+  
+.eliminatedRibbon:after {
+    content: "Eliminated";
+    z-index: 1;
+    overflow: hidden;
+    font-size: 10px;
+    font-weight: bold;
+    color: #FFF;
+    text-transform: uppercase;
+    text-align: center;
+    line-height: 20px;
+    transform: rotate(45deg);
+    width: 120px;
+    display: block; 
+    background: #79A70A;
+    background: linear-gradient(#c90d0d 0%, #e54418 100%);
+    box-shadow: 0 3px 10px -5px rgba(0, 0, 0, 1);
+    position: absolute;
+    top: 20px; right: -30px;
+    clip-path: polygon(120px 20px, 90px -10px, 30px -10px, 0px 20px, 10px 30px,  110px 30px)
+}
+
+.waitingRibbon:before {
+  content: "";
+  z-index: -1;
+  overflow: hidden;
+  transform: rotate(-135deg);
+  width: 120px;
+  display: block; 
+  background: #79A70A;
+  background: linear-gradient(#e8d715 0%, #e8d715 100%);
+  box-shadow: 0 3px 10px -5px rgba(0, 0, 0, 1);
+  position: absolute;
+  top: 34px;
+  right: -16px;
+  clip-path: polygon(120px 20px, 90px -10px, 30px -10px, 0px 20px, 10px 30px,  110px 30px);
+  height: 20px;
+  width: 120px;
+}
+
+.waitingRibbon:after {
+  content: "Waiting";
+  z-index: 1;
+  overflow: hidden;
+  font-size: 10px;
+  font-weight: bold;
+  color: #FFF;
+  text-transform: uppercase;
+  text-align: center;
+  line-height: 20px;
+  transform: rotate(45deg);
+  width: 120px;
+  display: block; 
+  background: #79A70A;
+  background: linear-gradient(#e8d715 0%, #e8d715 100%);
+  box-shadow: 0 3px 10px -5px rgba(0, 0, 0, 1);
+  position: absolute;
+  top: 20px; right: -30px;
+  clip-path: polygon(120px 20px, 90px -10px, 30px -10px, 0px 20px, 10px 30px,  110px 30px)
+}
+  
+  .userEliminatedHeader{
+    color: #c90d0d;
+  }
+
+  .waitingForGameStartHeader{
+    color: #008000;
+  }

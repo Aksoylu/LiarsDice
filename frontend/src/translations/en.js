@@ -30,7 +30,11 @@ const ENGLISH = {
     "button_call_bluff": "Call Bluff",
 
     "error_message_screen_size_not_compatible": "Screen size is not compatible. You need least 900x700 display for playing Liar's Dice",
-    
+
+    "info_panel_waiting_for_game_start": "Waiting for game start",
+    "info_panel_eliminated": "You are eliminated !",
+    "info_panel_subtitle_waiting_for_game_start": "You are waiting game to start with other players. Room admin could able to start game when everyone is ready.",
+    "info_panel_subtitle_eliminated": "You lost your all dices. So, you are not able to declare bid or taking any action until next game.",
 
 }
 

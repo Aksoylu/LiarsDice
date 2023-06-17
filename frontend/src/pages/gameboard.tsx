@@ -1,17 +1,19 @@
 import React, {useEffect, useState} from 'react';
 import svgImage from '../assets/board.svg';
-import "./gameboard.css";
+
 
 import ChatBox from '../components/chatBox';
 import Navbar from '../components/navBar';
 import UserCard from '../components/userCard';
 import Signal from '../components/signal';
 import ActionPanel from '../components/actionPanel';
+import InfoActionPanel from '../components/infoActionPanel';
 
 import {ColorPalette} from "../types/ColorPalette";
 import {Bid} from "../types/Bid";
 
-import {colorPaletteList, GameSignals} from "../constants";
+import "./gameboard.css";
+import {colorPaletteList, GameSignals, InfoActionPanelStates} from "../constants";
 const {getTranslationInstance} = require("../translations/translate");
 
 interface GameboardProps {
@@ -84,18 +86,52 @@ const pushSignal = (username:string) => {
   }
 }
 
-const renderActionPanel = (username:string, isUserEliminated:boolean, isActionPanelVisible:boolean, language:string) => {
-  return (<ActionPanel username={username} isActionPanelVisible={isActionPanelVisible} isUserEliminated={false} userLang={language}/>);
+const renderActionPanel = (username:string, isGameStarted:boolean, isUserEliminated:boolean, isActionPanelVisible:boolean) => {
+  if(isGameStarted)
+  {
+    if(isUserEliminated)
+    {
+      return (<InfoActionPanel state={InfoActionPanelStates.userEliminated}/>);
+    }
+    else
+    {
+      return (<ActionPanel isActionPanelVisible={isActionPanelVisible} />);
+    }
+  }
+  else
+  {
+    return (<InfoActionPanel state={InfoActionPanelStates.waitingForGameStart}/>);
+  }
 }
 
-const GameBoard: React.FC<GameboardProps> = ({ username, auth_hash, room_id, user_lang}) => {
-  const translation = getTranslationInstance(user_lang);
+const GameBoard: React.FC<GameboardProps> = ({ username, auth_hash, room_id}) => {
   const randomPalettes = createRandomPalettes(6);
 
   const [isTurn, setIsTurn] = useState(false);
-  // TODO REMOVE
-  (window as any).setIsTurn = function(value:boolean){
-    setIsTurn(value);
+  const [isUserEliminated, setIsUserEliminated] = useState(false);
+  const [isGameStarted, setIsGameStarted] = useState(false);
+
+  /* TODO REMOVE COMMAND SET LATER */
+  (window as any).command = function(command:string){
+    const parsedCommand = command.split(":");
+    const func = parsedCommand[0];
+    const param = parsedCommand[1];
+    
+    switch (func)
+    {
+      case "set_is_turn":
+          setIsTurn(param.toLowerCase() === "true");
+        break;
+      
+      case "set_is_eleminated":
+        setIsUserEliminated(param.toLowerCase() === "true");
+        break;
+
+      case "set_game_started":
+          setIsGameStarted(param.toLowerCase() === "true");
+          setIsTurn(false);
+        break;
+    }
   }
 
   const exampleBid:Bid = {
@@ -134,7 +170,7 @@ const GameBoard: React.FC<GameboardProps> = ({ username, auth_hash, room_id, use
           <br/>
           <div className="row">
             <div className='col-12'>
-              {renderActionPanel(username,false,isTurn, user_lang)}
+               {renderActionPanel(username, isGameStarted, isUserEliminated, isTurn)}
             </div>
           </div>
       </div>

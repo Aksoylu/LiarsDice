@@ -1,30 +1,27 @@
-import React, {useState, useEffect} from 'react';
+import React from 'react';
 import InputSpinner from './inputSpinner'
 import './actionPanel.css';
 import 'animate.css';
 
+const {getLang} = require("../global");
 const {getTranslationInstance} = require("../translations/translate");
 
 interface ActionPanelProps{
-  username: string;
-  isUserEliminated: boolean;
   isActionPanelVisible: boolean;
-  userLang: string;
 }
 
 const in_animation = "animate__slideInUp";
 const out_animation = "animate__slideOutDown";
 
-const ActionPanel: React.FC<ActionPanelProps> = ({username, isUserEliminated, isActionPanelVisible, userLang}) => {
-  const translation = getTranslationInstance(userLang);
+const ActionPanel: React.FC<ActionPanelProps> = ({isActionPanelVisible}) => {
+  const translation = getTranslationInstance(getLang());
 
   const animationClass = isActionPanelVisible ? in_animation : out_animation;
-  const className = "animate__animated " + animationClass;
-
+  const className = "yourTurnRibbon animate__animated " + animationClass;
 
   return (
-    <div className="actionPanel " >
-        <div className={className + " yourTurnRibbon"}>
+    <div className="actionPanel" >
+        <div className={className}>
           <div className="card actionCard">
             <div className="row card-row">
               <div className='col-4'>
