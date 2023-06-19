@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import './welcome.css';
 const {getTranslationInstance} = require("../translations/translate");
 
@@ -19,24 +19,48 @@ const panelSwitchToJoinRoom = () => {
     container.classList.remove("right-panel-active");
 }
 
+const authUser = (username:string) => {
+  // todo send request to backend and get auth key & color palette id
+  const authKey = "...";
+  localStorage.setItem("username", username);
+  localStorage.setItem("authKey", authKey);
+
+}
+
 const createRoomAction = () => {
-  console.log("todo implement: createRoomAction");
+  const usernameElement = document.getElementById("username");
+  const roomIdElement = document.getElementById("roomId");
+
+  const username = usernameElement ? usernameElement.getAttribute("value") : null;
+  const roomId = roomIdElement ? roomIdElement.getAttribute("value") : null;
+
+  console.log("todo implement: createRoomAction", username, roomId);
 }
 
 const joinRoomAction = () => {
-  console.log("todo implement: joinRoomAction");
+  const usernameElement = document.getElementById("username");
+  const roomIdElement = document.getElementById("roomId");
+
+  const username = usernameElement ? usernameElement.getAttribute("value") : null;
+  const roomId = roomIdElement ? roomIdElement.getAttribute("value") : null;
+
+  console.log("todo implement: joinRoomAction", username, roomId);
 }
 
+
 const Welcome: React.FC<WelcomeProps> = ({room_id }) => {
+  const storageLang = localStorage.getItem('user_lang') ?? "en";
+  const storageUsername = localStorage.getItem('username') ?? "";
 
-  const user_lang = localStorage.getItem('user_lang') ?? "en";
-  const username = localStorage.getItem('username') ?? "";
+  const translation = getTranslationInstance(storageLang);
 
-  const translation = getTranslationInstance(user_lang);
+  const [username, setUsername] = useState(storageUsername);
+  const [roomId, setRoomId] = useState(room_id);
+
 
   if(room_id != null && room_id.toString().length > 0)
   {
-    
+    //setRoomId(roomId);
   }
 
   return (
@@ -46,8 +70,16 @@ const Welcome: React.FC<WelcomeProps> = ({room_id }) => {
         <form action="#">
           <h1>{translation.get("create_room_title")}</h1>
           <span>{translation.get("create_room_subtitle")}</span>
-          <input type="text" placeholder={translation.get("username_text_place_holder")} defaultValue={username}/>
-          <input type="text" placeholder={translation.get("room_id_text_place_holder")}/>
+          <input type="text" 
+            placeholder={translation.get("username_text_place_holder")} 
+            value={username} 
+            onChange={(e) => setUsername(e.target.value)}
+            id="username"/>
+          <input type="text" 
+            placeholder={translation.get("room_id_text_place_holder")} 
+            value={roomId} 
+            onChange={(e) => setRoomId(e.target.value)}
+            id="roomId"/>
           <button onClick={createRoomAction}>{translation.get("create_room_button")}</button>
         </form> 
       </div>
@@ -55,8 +87,16 @@ const Welcome: React.FC<WelcomeProps> = ({room_id }) => {
         <form action="#">
           <h1>{translation.get("join_room_header")}</h1>
           <span>{translation.get("join_room_subtitle")}</span>
-          <input type="text" placeholder={translation.get("username_text_place_holder")} defaultValue={username}/>
-          <input type="text" placeholder={translation.get("room_id_text_place_holder")} defaultValue={room_id}/>
+          <input type="text" 
+            placeholder={translation.get("username_text_place_holder")} 
+            value={username} 
+            onChange={(e) => setUsername(e.target.value)}
+            id="username"/>
+          <input type="text" 
+            placeholder={translation.get("room_id_text_place_holder")} 
+            value={roomId} 
+            onChange={(e) => setRoomId(e.target.value)}
+            id="roomId"/>
           <button onClick={joinRoomAction}>{translation.get("join_room_button")}</button>
         </form>
       </div>

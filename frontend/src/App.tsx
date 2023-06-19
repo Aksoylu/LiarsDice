@@ -29,6 +29,8 @@ const App: React.FC = () => {
     return (<Error errorType={ErrorPageTypes.screenSizeNotCompatible}/>);
   }
 
+  // todo navigate unauth gameboard requests to join_room
+  // todo navigate auth join_room requests to gamerboard
   return (
     <Router>
       <Routes>

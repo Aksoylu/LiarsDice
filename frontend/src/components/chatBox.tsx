@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import './chatBox.css';
 
+// todo align component height width action panel
+
 const ChatBox: React.FC = () => {
   const [messages, setMessages] = useState<string[]>([]);
   const [inputValue, setInputValue] = useState<string>('');

@@ -77,3 +77,16 @@
     color: #fff;
     list-style: none;
 }
+
+.swal2-html-container {
+    text-align: justify !important;
+}
+
+.swal2-title {
+    text-align: left !important;
+
+}
+
+.modal-right-buttons {
+    margin-right: 24px;
+  }

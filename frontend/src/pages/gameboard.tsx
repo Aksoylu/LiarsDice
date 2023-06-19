@@ -23,22 +23,51 @@ interface GameboardProps {
   user_lang: string;
 }
 
+interface EachUserData {
+  username: string;
+  turnNumber: number;
+  colorPalette: ColorPalette;
+  bid: Bid;
+  isTurn: boolean;
+  isEliminated: boolean;
+}
 
-const createRandomPalettes = (count:number) => {
-  const paletteList: ColorPalette[] = [];
+/* TODO REMOVE COMMAND SET LATER */
+const createDummyUsers = (count:number) => {
+  const userArray = [];
 
-  while(paletteList.length < count)
+  for(let i = 0; i < count; i++)
   {
     const randomIndex = Math.floor(Math.random() * colorPaletteList.length);
-    const randomPalette = colorPaletteList[randomIndex];
-    if(paletteList.includes(randomPalette))
-      continue;
-    
-      paletteList.push(randomPalette);
-  }
+    const colorPalette:ColorPalette = colorPaletteList[randomIndex];
+    const bid:Bid = {
+      dice: Math.floor(Math.random() * 6),
+      quality: Math.floor(Math.random() * 10)
+    };
 
-  return paletteList;
+    const newUser:EachUserData = {
+      username: "random_user_" + i.toString(),
+      turnNumber: i,
+      colorPalette:colorPalette,
+      bid: bid,
+      isTurn: false,
+      isEliminated: false,
+    }
+    userArray.push(newUser);
+  }
+  return userArray;
+};
+
+const renderUser = (userData:EachUserData) => {
+  return (<UserCard 
+            username={userData.username} 
+            colorPalette={userData.colorPalette} 
+            isTurn={userData.isTurn} 
+            bid={userData.bid} 
+            isEliminated={userData.isEliminated}/>
+  );
 }
+
 
 const pushSignal = (username:string) => {
   
@@ -105,11 +134,14 @@ const renderActionPanel = (username:string, isGameStarted:boolean, isUserElimina
 }
 
 const GameBoard: React.FC<GameboardProps> = ({ username, auth_hash, room_id}) => {
-  const randomPalettes = createRandomPalettes(6);
+
 
   const [isTurn, setIsTurn] = useState(false);
   const [isUserEliminated, setIsUserEliminated] = useState(false);
   const [isGameStarted, setIsGameStarted] = useState(false);
+  const [isSelfAdmin, seIsSelfAdmin] = useState(false);
+
+  const [userDatalist, setUserDatalist] = useState(createDummyUsers(3));
 
   /* TODO REMOVE COMMAND SET LATER */
   (window as any).command = function(command:string){
@@ -131,50 +163,54 @@ const GameBoard: React.FC<GameboardProps> = ({ username, auth_hash, room_id}) =>
           setIsGameStarted(param.toLowerCase() === "true");
           setIsTurn(false);
         break;
+
+      case "set_user_data":
+        const newDataList = [...userDatalist]
+        newDataList[0].username = param;
+        setUserDatalist(newDataList);
+        break;
     }
   }
 
-  const exampleBid:Bid = {
-    dice: 6,
-    quality: 3
-  };
-
   return (
     <div>
-      <Navbar />
+      <Navbar isGameStarted={isGameStarted} isAdmin={isSelfAdmin}/>
         <img className='backgroundImage' src={svgImage} />
       
       <div className='signalContainer'>
         {pushSignal(username)}
       </div>
-    
       <div className="board-container">
-  
           <div className="row">
             <div className='col-4'>
-              <UserCard username='veli' colorPalette={randomPalettes[0]} isTurn={true} bid={exampleBid} isEliminated={false}/></div>
+              {userDatalist.length > 0 && renderUser(userDatalist[0])}
+            </div>
             <div className='col-4'>
-              <UserCard username='mehmet' colorPalette={randomPalettes[1]} isTurn={false} bid={exampleBid} isEliminated={false}/></div>
+              {userDatalist.length > 1 && renderUser(userDatalist[1])}
+            </div>
             <div className='col-4'>
-              <UserCard username='murat' colorPalette={randomPalettes[2]} isTurn={false} bid={exampleBid} isEliminated={false}/></div>
-          </div>
-          <br/>
-          <div className="row">
-          <div className='col-4'>
-            <UserCard username='beyza' colorPalette={randomPalettes[3]} isTurn={false} bid={exampleBid} isEliminated={false}/></div>
-          <div className='col-4'>
-            <UserCard username='elif' colorPalette={randomPalettes[4]} isTurn={false} bid={exampleBid} isEliminated={false}/></div>
-          <div className='col-4'>
-            <UserCard username='gamze' colorPalette={randomPalettes[5]} isTurn={false} bid={exampleBid} isEliminated={true}/></div>
-          </div>
-          <br/>
-          <div className="row">
-            <div className='col-12'>
-               {renderActionPanel(username, isGameStarted, isUserEliminated, isTurn)}
+              {userDatalist.length > 2 && renderUser(userDatalist[2])}
             </div>
           </div>
+          <br/>
+          <div className="row">
+            <div className='col-4' id="turn_4">
+              {userDatalist.length > 3 && renderUser(userDatalist[3])}
+            </div>
+            <div className='col-4' id="turn_5">
+              {userDatalist.length > 4 && renderUser(userDatalist[4])}
+            </div>
+            <div className='col-4' id="turn_6">
+              {userDatalist.length > 5 && renderUser(userDatalist[5])}
+            </div>
+            </div>
+            <br/>
+            <div className="row">
+              <div className='col-12'>
+                {renderActionPanel(username, isGameStarted, isUserEliminated, isTurn)}
+              </div>
+            </div>
       </div>
-
       <ChatBox/>
     </div>
   );
