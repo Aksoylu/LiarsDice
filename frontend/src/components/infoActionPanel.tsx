@@ -2,7 +2,7 @@ import React from 'react';
 import './infoActionPanel.css';
 import 'animate.css';
 
-const {getLang} = require("../global");
+import globalContext from "../global";
 const {InfoActionPanelStates} = require("../constants");
 const {getTranslationInstance} = require("../translations/translate");
 
@@ -36,7 +36,7 @@ const ribbonClasses = {
 }
 
 const InfoActionPanel: React.FC<EleminatedActionPanelProps> = ({state}) => {
-  const translation = getTranslationInstance(getLang());
+  const translation = getTranslationInstance(globalContext.getLang());
   const className = ribbonClasses[state] + " animate__animated animate__slideInUp";
   
   return (

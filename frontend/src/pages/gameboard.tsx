@@ -139,7 +139,7 @@ const GameBoard: React.FC<GameboardProps> = ({ username, auth_hash, room_id}) =>
   const [isTurn, setIsTurn] = useState(false);
   const [isUserEliminated, setIsUserEliminated] = useState(false);
   const [isGameStarted, setIsGameStarted] = useState(false);
-  const [isSelfAdmin, seIsSelfAdmin] = useState(false);
+  const [isSelfAdmin, setIsSelfAdmin] = useState(false);
 
   const [userDatalist, setUserDatalist] = useState(createDummyUsers(3));
 
@@ -169,8 +169,15 @@ const GameBoard: React.FC<GameboardProps> = ({ username, auth_hash, room_id}) =>
         newDataList[0].username = param;
         setUserDatalist(newDataList);
         break;
+      
+      case "set_admin":
+        setIsSelfAdmin(param.toLowerCase() === "true");
+      break;
     }
   }
+
+  /* TODO CREATE WEBSOCKET INSTANCE HERE */
+  
 
   return (
     <div>

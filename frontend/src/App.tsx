@@ -31,6 +31,7 @@ const App: React.FC = () => {
 
   // todo navigate unauth gameboard requests to join_room
   // todo navigate auth join_room requests to gamerboard
+  // todo show reconnect modal if game continues with room id that placed in global context
   return (
     <Router>
       <Routes>

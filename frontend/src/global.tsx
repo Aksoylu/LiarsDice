@@ -1,7 +1,37 @@
-export const getLang = () => {
-    return localStorage.getItem('user_lang') ?? "en";
+/** @singleton */
+class GlobalContext{
+
+    username = "";
+    language = "";
+    authKey = "";
+    room = {    // todo implement
+        roomId: "",
+        isAdmin: "",
+    };
+
+    constructor(){
+        this.username = localStorage.getItem("username") ?? "";
+        this.authKey = localStorage.getItem("auth_key") ?? "";
+        this.language = localStorage.getItem('user_lang') ?? "en";
+        
+    }
+
+    isAuth(){
+        return (this.username != "")
+    }
+
+    getLang(){
+        return this.language;
+    }
+
+    getUsername(){
+        return this.username;
+    }
+
+    getAuth(){
+        return this.authKey;
+    }
 }
 
-export const getUsername = () => {
-    return localStorage.getItem('username') ?? null;
-}
+const globalContext = new GlobalContext();
+export default globalContext;

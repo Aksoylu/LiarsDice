@@ -3,7 +3,8 @@ import InputSpinner from './inputSpinner'
 import './actionPanel.css';
 import 'animate.css';
 
-const {getLang} = require("../global");
+import globalContext from "../global";
+
 const {getTranslationInstance} = require("../translations/translate");
 
 interface ActionPanelProps{
@@ -14,7 +15,7 @@ const in_animation = "animate__slideInUp";
 const out_animation = "animate__slideOutDown";
 
 const ActionPanel: React.FC<ActionPanelProps> = ({isActionPanelVisible}) => {
-  const translation = getTranslationInstance(getLang());
+  const translation = getTranslationInstance(globalContext.getLang());
 
   const animationClass = isActionPanelVisible ? in_animation : out_animation;
   const className = "yourTurnRibbon animate__animated " + animationClass;
