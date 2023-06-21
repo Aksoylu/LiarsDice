@@ -120,6 +120,8 @@ const ENGLISH = {
     "language_nav": "Language",
     "button_next": "Next",
     "button_ok": "OK",
+
+    "modal_select_language_title": "Select Language",
 }
 
 module.exports = ENGLISH

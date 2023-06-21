@@ -5,12 +5,13 @@
     width: 100%;
     display: flex;
     align-items: center;
-    justify-content: space-between;
     background-color: #333;
     color: #fff;
     padding: 10px;
     z-index: 9999;
     max-height: 120px;
+    justify-content:space-between;
+
 }
 
 .navbar-logo {
@@ -18,10 +19,22 @@
     color: #fff;
 }
 
+.navbar-left {
+    display:flex;
+    justify-content:left;
+    align-items: center;
+    max-width: 70%;
+    min-width: 600px;
+
+}
+
+
 .navbar-menu {
+    margin-left: 32px;
     display: flex;
     list-style: none;
     padding: 0;
+
 }
 
 .navbar-menu-item {
@@ -59,24 +72,6 @@
     display: none;
 }
 
-.navbar-submenu{
-    z-index: 2;
-    display: block;
-    position: absolute;
-    margin-top: 20px;
-    margin-left: 0px;
-    padding-left: 10px;
-    padding-bottom: 10px;
-    padding-top: 10px;
-    width: 15vw;
-    background-color: #333;
-    border-radius: 10px;
-    align-items: center;
-    justify-content: space-between;
-    background-color: #333;
-    color: #fff;
-    list-style: none;
-}
 
 .swal2-html-container {
     text-align: justify !important;
@@ -89,4 +84,8 @@
 
 .modal-right-buttons {
     margin-right: 24px;
-  }
+}
+
+.selectpicker {
+    width: 100%;
+}
