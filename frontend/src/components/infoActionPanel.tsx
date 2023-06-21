@@ -6,7 +6,7 @@ import globalContext from "../global";
 const {InfoActionPanelStates} = require("../constants");
 const {getTranslationInstance} = require("../translations/translate");
 
-interface EleminatedActionPanelProps{
+interface InfoActionPanelProps{
   state: number;
 }
 
@@ -35,7 +35,7 @@ const ribbonClasses = {
   [InfoActionPanelStates.userEliminated]: "eliminatedRibbon",
 }
 
-const InfoActionPanel: React.FC<EleminatedActionPanelProps> = ({state}) => {
+const InfoActionPanel: React.FC<InfoActionPanelProps> = ({state}) => {
   const translation = getTranslationInstance(globalContext.getLang());
   const className = ribbonClasses[state] + " animate__animated animate__slideInUp";
   

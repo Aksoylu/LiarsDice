@@ -1,6 +1,7 @@
 .chatbox-messages{
     max-height: 20vh;
     overflow-y:scroll;
+    padding-top:4px;
 }
 
 .sendButton{
@@ -13,6 +14,7 @@
 }
 
 .chatbox-input{
+    margin-top: 10px;
     width: 100%;
     border: 1px solid #008000;
 }

@@ -14,7 +14,6 @@ import {Bid} from "../types/Bid";
 
 import "./gameboard.css";
 import {colorPaletteList, GameSignals, InfoActionPanelStates} from "../constants";
-const {getTranslationInstance} = require("../translations/translate");
 
 interface GameboardProps {
   username: string;
@@ -218,7 +217,12 @@ const GameBoard: React.FC<GameboardProps> = ({ username, auth_hash, room_id}) =>
               </div>
             </div>
       </div>
-      <ChatBox/>
+      <div className="row">
+        <div className='col-12'>
+          <ChatBox/>
+        </div>
+      </div>
+      
     </div>
   );
 };
