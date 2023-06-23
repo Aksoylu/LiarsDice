@@ -2,6 +2,7 @@ import React, {useEffect, useState} from 'react';
 import './App.css';
 import { BrowserRouter as Router, Route, Routes, useParams } from 'react-router-dom';
 import {AllowedPageSize, ErrorPageTypes} from './constants';
+import globalContext from './global';
 
 import Welcome from './pages/welcome';
 import GameBoard from './pages/gameboard';
@@ -29,18 +30,24 @@ const App: React.FC = () => {
     return (<Error errorType={ErrorPageTypes.screenSizeNotCompatible}/>);
   }
 
-  // todo navigate unauth gameboard requests to join_room
-  // todo navigate auth join_room requests to gamerboard
-  // todo show reconnect modal if game continues with room id that placed in global context
+  const isAuth = globalContext.isAuth();
+  const localeRoomId = globalContext.getLocaleRoomId() || null;
+
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<Welcome />} />
-        <Route path="about" element={<About />} />
-        <Route path="join_room/:room_id" element={<WelcomeWithRoomId />} />
-        <Route path="gameboard/:room_id" element={<GameboardwithRoomId />} />
-        <Route path="gameboard" element={<h1>hata : oda numarası yok</h1>} /> // todo implement error
+        {!localeRoomId &&  <Route path="/" element={<Welcome />} />}
+        {localeRoomId &&  <Route path="/" element={<Welcome show_reconnect_modal={true}/>} />}
 
+        
+        {!isAuth && <Route path="join_room/:room_id" element={<WelcomeWithRoomId />} />}
+        {isAuth && <Route path="join_room/:room_id" element={<GameboardwithRoomId />} />}
+
+        {isAuth &&  <Route path="gameboard/:room_id" element={<GameboardwithRoomId />} />}
+        {!isAuth &&  <Route path="gameboard/:room_id" element={<WelcomeWithRoomId />} />}
+
+        <Route path="about" element={<About />} />
+        <Route path="gameboard" element={<h1>hata : oda numarası yok</h1>} /> // todo implement error
       </Routes>
     </Router>
   );

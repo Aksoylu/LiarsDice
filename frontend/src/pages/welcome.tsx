@@ -1,11 +1,19 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { LanguageSelectorTheme } from "../constants";
 import LanguageSelector from "../components/languageSelector";
 import './welcome.css';
 
+import Swal from 'sweetalert2'
+import withReactContent from 'sweetalert2-react-content'
+
+import httpService from '../services/httpService';
+import globalContext from '../global';
+
+const swal = withReactContent(Swal);
 const { getTranslationInstance } = require("../translations/translate");
 interface WelcomeProps {
   room_id?: string;
+  show_reconnect_modal?: boolean;
 }
 
 const panelSwitchToCreateRoom = () => {
@@ -50,18 +58,53 @@ const joinRoomAction = () => {
 }
 
 
-const Welcome: React.FC<WelcomeProps> = ({ room_id }) => {
-  const storageLang = localStorage.getItem('user_lang') ?? "en";
-  const storageUsername = localStorage.getItem('username') ?? "";
+const getLocaleRoomId = async ()=> {
 
-  const translation = getTranslationInstance(storageLang);
+  const lang = globalContext.getLang();
+  const translation = getTranslationInstance(lang);
+
+
+  const localeRoomId = globalContext.getLocaleRoomId();
+  if(!localeRoomId)
+    return;
+
+  const roomDetails = await httpService.getRoomDetails(localeRoomId);
+
+  swal.fire({
+    title: translation.get("modal_reconnect_title"),
+    html: <div>
+      <p>{translation.get("modal_reconnect_subtitle")} <br/>{roomDetails}</p>
+      <b>{translation.get("modal_reconnect_subtitle_2")}</b>
+    </div>,
+  
+    showCancelButton: true,
+    confirmButtonText: translation.get("modal_reconnect_accept_button"),
+    cancelButtonText:  translation.get("modal_reconnect_decline_button"),
+  }).then((swalModalResult)=>{
+    if(swalModalResult.dismiss === Swal.DismissReason.cancel)
+    {
+      globalContext.clearLocaleRoomId();
+    }
+    else if(swalModalResult.isConfirmed)
+    {
+      window.location.href = "/gameboard/" + localeRoomId;
+    }
+  })
+}
+
+const Welcome: React.FC<WelcomeProps> = ({ room_id, show_reconnect_modal }) => {
+  
+  const lang = globalContext.getLang();
+  const storageUsername =  globalContext.getUsername();
+
+  const translation = getTranslationInstance(lang);
 
   const [username, setUsername] = useState(storageUsername);
   const [roomId, setRoomId] = useState(room_id);
 
-
-  if (room_id != null && room_id.toString().length > 0) {
-    //setRoomId(roomId);
+  if(show_reconnect_modal)
+  {
+    getLocaleRoomId();
   }
 
   return (

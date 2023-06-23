@@ -1,10 +1,10 @@
 /** @singleton */
 class GlobalContext{
 
-    username = "";
-    language = "";
-    authKey = "";
-    localeRoomId = "";
+    username:string;
+    language:string;
+    authKey:string|null;
+    localeRoomId:string|null;
 
     isAdmin = false;
 
@@ -12,6 +12,7 @@ class GlobalContext{
         this.username = localStorage.getItem("username") ?? "";
         this.authKey = localStorage.getItem("auth_key") ?? "";
         this.language = localStorage.getItem("user_lang") ?? "en";
+        this.localeRoomId = localStorage.getItem("room_id") ?? null;
     }
 
     getLocaleRoomId(){
@@ -20,6 +21,11 @@ class GlobalContext{
 
     setLocaleRoomId(localeRoomId:string){
         this.localeRoomId = localeRoomId;
+    }
+
+    clearLocaleRoomId(){
+        this.localeRoomId = null;
+        localStorage.removeItem("room_id");
     }
 
     setLang(user_lang:string){
@@ -45,7 +51,7 @@ class GlobalContext{
     }
 
     isAuth(){
-        return (this.username != "" || this.authKey != "")
+        return (this.username != "" && this.authKey != "")
     }
 }
 

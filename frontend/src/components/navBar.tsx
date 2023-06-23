@@ -12,7 +12,7 @@ import "./navBar.css";
 
 import websocketService from "../services/websocketService";
 
-const MySwal = withReactContent(Swal);
+const swal = withReactContent(Swal);
 const {getTranslationInstance} = require("../translations/translate");
 
 interface NavbarProps {
@@ -33,7 +33,7 @@ const Navbar: React.FC<NavbarProps> = ({isAdmin, isGameStarted}) => {
       actions: 'modal-right-buttons',
     };
 
-    await MySwal.fire({
+    await swal.fire({
       customClass: customClass,
       title: translation.get("modal_how_to_play_title_1"),
       html: translation.get("modal_how_to_play_html_content_1"),
@@ -42,7 +42,7 @@ const Navbar: React.FC<NavbarProps> = ({isAdmin, isGameStarted}) => {
       width: modalWidth,
     });
 
-    await MySwal.fire({
+    await swal.fire({
       customClass: customClass,
       title: translation.get("modal_how_to_play_title_2"),
       html: translation.get("modal_how_to_play_html_content_2"),
@@ -51,7 +51,7 @@ const Navbar: React.FC<NavbarProps> = ({isAdmin, isGameStarted}) => {
       width: modalWidth,
     });
 
-    await MySwal.fire({
+    await swal.fire({
       customClass: customClass,
       title: translation.get("modal_how_to_play_title_3"),
       html: translation.get("modal_how_to_play_html_content_3"),
@@ -60,7 +60,7 @@ const Navbar: React.FC<NavbarProps> = ({isAdmin, isGameStarted}) => {
       width: modalWidth,
     });
 
-    await MySwal.fire({
+    await swal.fire({
       customClass: customClass,
       title: translation.get("modal_how_to_play_title_4"),
       html: translation.get("modal_how_to_play_html_content_4"),

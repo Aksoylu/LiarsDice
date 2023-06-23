@@ -121,7 +121,11 @@ const ENGLISH = {
     "button_next": "Next",
     "button_ok": "OK",
 
-    "modal_select_language_title": "Select Language",
+    "modal_reconnect_title": "Reconnect Previous Room ?",
+    "modal_reconnect_subtitle": "Looks like you are already joined a room :",
+    "modal_reconnect_subtitle_2": "Do you want to reconnect ?",
+    "modal_reconnect_accept_button": "Yes, reconnect",
+    "modal_reconnect_decline_button": "No",
 }
 
 module.exports = ENGLISH
