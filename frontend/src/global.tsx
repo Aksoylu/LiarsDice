@@ -11,7 +11,7 @@ class GlobalContext{
     constructor(){
         this.username = localStorage.getItem("username") ?? "";
         this.authKey = localStorage.getItem("auth_key") ?? "";
-        this.language = localStorage.getItem('user_lang') ?? "en";
+        this.language = localStorage.getItem("user_lang") ?? "en";
     }
 
     getLocaleRoomId(){
@@ -22,12 +22,13 @@ class GlobalContext{
         this.localeRoomId = localeRoomId;
     }
 
-    setLang(lang:string){
-        this.language = lang;
+    setLang(user_lang:string){
+        this.language = user_lang;
+        localStorage.setItem("user_lang", user_lang);
     }
 
     getLang(){
-        return this.language;
+        return this.language ?? "en";
     }
     
     setAuth(username:string, authKey:string){

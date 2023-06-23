@@ -20,6 +20,7 @@ const ActionPanel: React.FC<ActionPanelProps> = ({isActionPanelVisible}) => {
   const animationClass = isActionPanelVisible ? in_animation : out_animation;
   const className = "yourTurnRibbon animate__animated " + animationClass;
 
+  // todo create dice spinner component
   return (
     <div className="actionPanel" >
         <div className={className}>

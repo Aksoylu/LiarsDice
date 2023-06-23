@@ -1,7 +1,10 @@
 const ENGLISH = require("./en");
 
 const TRANSLATIONS = {
-    "en": ENGLISH
+    "en": ENGLISH, 
+    "de": ENGLISH, /* TODO: FOR TEST, REMOVE LATER */ 
+    "tr": ENGLISH, /* TODO: FOR TEST, REMOVE LATER */ 
+
 }
 
 const getTranslationInstance = (lang_key) => {

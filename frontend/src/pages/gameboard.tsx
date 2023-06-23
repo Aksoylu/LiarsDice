@@ -178,6 +178,7 @@ const GameBoard: React.FC<GameboardProps> = ({ username, auth_hash, room_id}) =>
   /* TODO CREATE WEBSOCKET INSTANCE HERE */
   
 
+  
   return (
     <div>
       <Navbar isGameStarted={isGameStarted} isAdmin={isSelfAdmin}/>

@@ -6,6 +6,8 @@ import withReactContent from 'sweetalert2-react-content'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faRightFromBracket, faCircleInfo, faDice, faLanguage, faGamepad } from '@fortawesome/free-solid-svg-icons';
 import LanguageSelector from "./languageSelector";
+import {LanguageSelectorTheme} from "../constants";
+
 import "./navBar.css";
 
 import websocketService from "../services/websocketService";
@@ -68,20 +70,6 @@ const Navbar: React.FC<NavbarProps> = ({isAdmin, isGameStarted}) => {
     });
   }
 
-  /** @todo implement */
-  const pushSelectLanguageModal = async () => {
-    const buttonColor = "#1aa33c";
-    const modalWidth = "30%";
-
-    await MySwal.fire({
-      //title: translation.get("modal_select_language_title"),
-      html: <LanguageSelector minimumValue={3}/>,
-      confirmButtonText: translation.get("button_ok"),
-      confirmButtonColor: buttonColor,
-      width: modalWidth,
-    });
-  }
-
   /** 
    * @todo implement
    * @description: show modal first, if applies, broke websocket connection, clear local room storage and navigate to main screen
@@ -112,7 +100,7 @@ const Navbar: React.FC<NavbarProps> = ({isAdmin, isGameStarted}) => {
             </div>
           </div>
            
-          <LanguageSelector minimumValue={3}/>
+          <LanguageSelector languageSelectorTheme={LanguageSelectorTheme.DARK}/>
 
         </nav>
     </div>

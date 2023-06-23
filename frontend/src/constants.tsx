@@ -46,4 +46,15 @@ export const ErrorPageTypes = {
 export const InfoActionPanelStates = {
     waitingForGameStart: 1,
     userEliminated: 2
-}
+};
+
+export const Languages = {
+    EN: "en",
+    TR: "tr",
+    DE: "de",
+};
+
+export const LanguageSelectorTheme = {
+    DARK: 0,
+    LIGHT: 1,
+};
