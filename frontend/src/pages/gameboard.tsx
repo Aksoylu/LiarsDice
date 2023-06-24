@@ -15,11 +15,11 @@ import {Bid} from "../types/Bid";
 import "./gameboard.css";
 import {colorPaletteList, GameSignals, InfoActionPanelStates} from "../constants";
 
+import { useSelector, useDispatch } from 'react-redux';
+import globalContext from '../global';
+
 interface GameboardProps {
-  username: string;
-  auth_hash: string|null;
-  room_id: string;
-  user_lang: string;
+  room_id?: string;
 }
 
 interface EachUserData {
@@ -29,6 +29,11 @@ interface EachUserData {
   bid: Bid;
   isTurn: boolean;
   isEliminated: boolean;
+}
+
+const emptyBid:Bid = {
+  dice: 1,
+  quality: 1
 }
 
 /* TODO REMOVE COMMAND SET LATER */
@@ -66,7 +71,6 @@ const renderUser = (userData:EachUserData) => {
             isEliminated={userData.isEliminated}/>
   );
 }
-
 
 const pushSignal = (username:string) => {
   
@@ -123,7 +127,7 @@ const renderActionPanel = (username:string, isGameStarted:boolean, isUserElimina
     }
     else
     {
-      return (<ActionPanel isActionPanelVisible={isActionPanelVisible} />);
+      return (<ActionPanel isActionPanelVisible={isActionPanelVisible}/>);
     }
   }
   else
@@ -132,13 +136,15 @@ const renderActionPanel = (username:string, isGameStarted:boolean, isUserElimina
   }
 }
 
-const GameBoard: React.FC<GameboardProps> = ({ username, auth_hash, room_id}) => {
+const GameBoard: React.FC<GameboardProps> = ({ room_id }) => {
 
-
+  const username = globalContext.getUsername();
   const [isTurn, setIsTurn] = useState(false);
   const [isUserEliminated, setIsUserEliminated] = useState(false);
   const [isGameStarted, setIsGameStarted] = useState(false);
   const [isSelfAdmin, setIsSelfAdmin] = useState(false);
+  
+  // todo: set room id to global context if room id is valid
 
   const [userDatalist, setUserDatalist] = useState(createDummyUsers(3));
 
@@ -176,9 +182,15 @@ const GameBoard: React.FC<GameboardProps> = ({ username, auth_hash, room_id}) =>
   }
 
   /* TODO CREATE WEBSOCKET INSTANCE HERE */
-  
 
-  
+  // todo implement redux logic
+  // todo create websocket connected usercard-bid hook logic
+  // todo add connection state icon to users due to socket data
+  // todo create dice input to action panel
+  // todo fix action panel design
+  // todo implement bid to user card design
+  // todo fix users card design
+
   return (
     <div>
       <Navbar isGameStarted={isGameStarted} isAdmin={isSelfAdmin}/>

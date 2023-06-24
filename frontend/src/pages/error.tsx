@@ -1,7 +1,7 @@
 import React from 'react';
 import "./error.css";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import {faW, faWarning} from '@fortawesome/free-solid-svg-icons';
+import {faWarning, faXmark} from '@fortawesome/free-solid-svg-icons';
 
 const {ErrorPageTypes} = require("../constants");
 const {getTranslationInstance} = require("../translations/translate");
@@ -11,11 +11,13 @@ interface ErrorProps {
 }
 
 const errorMessages = {
-    [ErrorPageTypes.screenSizeNotCompatible]: "error_message_screen_size_not_compatible"
+    [ErrorPageTypes.screenSizeNotCompatible]: "error_message_screen_size_not_compatible",
+    [ErrorPageTypes.roomIdIsNotValid]: "error_message_room_id_is_not_valid"
 }
 
 const errorIcons = {
-    [ErrorPageTypes.screenSizeNotCompatible] : faWarning
+    [ErrorPageTypes.screenSizeNotCompatible] : faWarning,
+    [ErrorPageTypes.roomIdIsNotValid] : faXmark
 }
 
 const Error: React.FC<ErrorProps> = ({errorType}) => {

@@ -40,7 +40,8 @@ export const AllowedPageSize = {
 };
 
 export const ErrorPageTypes = {
-    screenSizeNotCompatible: 1
+    screenSizeNotCompatible: 1,
+    roomIdIsNotValid: 2
 };
 
 export const InfoActionPanelStates = {

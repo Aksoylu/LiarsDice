@@ -30,6 +30,7 @@ const ENGLISH = {
     "button_call_bluff": "Call Bluff",
 
     "error_message_screen_size_not_compatible": "Screen size is not compatible. You need least 900x700 display for playing Liar's Dice",
+    "error_message_room_id_is_not_valid": "Room Id is not valid or expired. Return home page to join another room or create one.",
 
     "info_panel_waiting_for_game_start": "Waiting for game start",
     "info_panel_eliminated": "You are eliminated !",

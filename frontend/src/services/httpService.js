@@ -8,7 +8,7 @@ class HttpService {
 
     /**
      * @public
-     * @description: Admin only | sends start signal to backend
+     * @description: Admin only | gets room details
      */
     async getRoomDetails(roomId){
         if(!globalContext.isAuth())

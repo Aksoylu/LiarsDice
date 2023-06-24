@@ -17,6 +17,9 @@ class WebsocketService {
         console.log(authKey,">","sendStartGameSignal");
     }
 
+    declareBid(){
+
+    }
 
 }
 

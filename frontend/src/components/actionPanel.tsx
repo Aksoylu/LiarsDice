@@ -1,9 +1,13 @@
 import React from 'react';
-import InputSpinner from './inputSpinner'
+import InputSpinner from './inputSpinner';
+import DicePicker from './dicePicker';
 import './actionPanel.css';
 import 'animate.css';
 
 import globalContext from "../global";
+
+import { useSelector, useDispatch } from 'react-redux';
+import {InitialStore} from "../types/Store";
 
 const {getTranslationInstance} = require("../translations/translate");
 
@@ -20,7 +24,17 @@ const ActionPanel: React.FC<ActionPanelProps> = ({isActionPanelVisible}) => {
   const animationClass = isActionPanelVisible ? in_animation : out_animation;
   const className = "yourTurnRibbon animate__animated " + animationClass;
 
-  // todo create dice spinner component
+  const bidAmount:number = useSelector((state:InitialStore) => state.quality);
+  const bidDice:number = useSelector((state:InitialStore) => state.dice);
+
+  const declareBet = () => {
+    // todo implement
+    console.log({
+      "bidAmount": bidAmount,
+      "bidDice": bidDice,
+    });
+  }
+
   return (
     <div className="actionPanel" >
         <div className={className}>
@@ -30,14 +44,14 @@ const ActionPanel: React.FC<ActionPanelProps> = ({isActionPanelVisible}) => {
                   <div className='row'>
                     <div className='col-4 '>
                       <h4 className='alignCenter'>{translation.get("title_bet_amount")}</h4>
-                      <InputSpinner minimumValue={2}/>
+                      <InputSpinner/>
                     </div>
 
                     <div className='col-4 '></div>
 
                     <div className='col-4 '>
                     <h4 className='alignCenter'>{translation.get("title_bet_dice")}</h4>
-                      <InputSpinner minimumValue={2}/>
+                      <DicePicker/>
                     </div>
 
                   </div>
@@ -46,7 +60,7 @@ const ActionPanel: React.FC<ActionPanelProps> = ({isActionPanelVisible}) => {
               <div className='col-4'>
                   
                   <div className='row'>
-                    <button className='actionButton'>{translation.get("button_declare_bet")}</button>
+                    <button className='actionButton' onClick={declareBet}>{translation.get("button_declare_bet")}</button>
                   </div>
                   <div className='row'>
                   <button className='actionButton'>{translation.get("button_call_bluff")}</button>

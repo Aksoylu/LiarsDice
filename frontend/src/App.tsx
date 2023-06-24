@@ -8,6 +8,7 @@ import Welcome from './pages/welcome';
 import GameBoard from './pages/gameboard';
 import About from './pages/about';
 import Error from './pages/error';
+import httpService from './services/httpService';
 
 const App: React.FC = () => {
 
@@ -39,7 +40,6 @@ const App: React.FC = () => {
         {!localeRoomId &&  <Route path="/" element={<Welcome />} />}
         {localeRoomId &&  <Route path="/" element={<Welcome show_reconnect_modal={true}/>} />}
 
-        
         {!isAuth && <Route path="join_room/:room_id" element={<WelcomeWithRoomId />} />}
         {isAuth && <Route path="join_room/:room_id" element={<GameboardwithRoomId />} />}
 
@@ -47,7 +47,7 @@ const App: React.FC = () => {
         {!isAuth &&  <Route path="gameboard/:room_id" element={<WelcomeWithRoomId />} />}
 
         <Route path="about" element={<About />} />
-        <Route path="gameboard" element={<h1>hata : oda numarası yok</h1>} /> // todo implement error
+        <Route path="gameboard" element={<Error errorType={ErrorPageTypes.roomIdIsNotValid}/>} />
       </Routes>
     </Router>
   );
@@ -55,22 +55,19 @@ const App: React.FC = () => {
 
 const WelcomeWithRoomId: React.FC = () => {
   const { room_id } = useParams();
-  return <Welcome room_id={room_id} />;
+
+  if(!room_id)
+    return <Error errorType={ErrorPageTypes.roomIdIsNotValid}/>
+
+   return <Welcome room_id={room_id} />;
 };
 
 const GameboardwithRoomId: React.FC = () => {
   const { room_id } = useParams();
+  if(!room_id)
+    return <Error errorType={ErrorPageTypes.roomIdIsNotValid}/>
 
-  const auth_hash = localStorage.getItem('auth_hash') ?? null;
-  const username = localStorage.getItem('username') ?? null;
-  const user_lang = localStorage.getItem('user_lang') ?? "en";
-  console.log("room_id >", room_id, username);
-  if(!room_id || !username)
-  {
-    return <h1>siktir</h1>;
-  }
-
-  return <GameBoard username={username} auth_hash={auth_hash} room_id={room_id} user_lang={user_lang}/>;
+  return <GameBoard room_id={room_id}/>;
 };
 
 export default App;
