@@ -4,8 +4,12 @@ const initialState = {
   counter: 0,
   quality: 3,
   minimumQuality: 1,
-  dice: 5,
-  // Diğer değişkenler...
+  dice: 0,
+  isTurn: false,
+  isUserEliminated: false,
+  isGameStarted: false,
+  isSelfAdmin: false,
+  roomPlayers: {},
 };
 
 const rootReducer = (state = initialState, action) => {
@@ -35,6 +39,37 @@ const rootReducer = (state = initialState, action) => {
         ...state,
         minimumQuality: action.payload,
       }
+    
+    case "SET_IS_TURN":
+      return {
+        ...state,
+        isTurn: action.payload,
+      }
+
+    case "SET_IS_ELIMINATED":
+      return {
+        ...state,
+        isUserEliminated: action.payload,
+      }
+    
+    case "SET_IS_GAME_STARTED":
+      return {
+        ...state,
+        isGameStarted: action.payload,
+      }
+
+    case "SET_IS_ADMIN":
+      return {
+        ...state,
+        isSelfAdmin: action.payload
+      }
+    
+    case "SET_ROOM_PLAYERS":
+      return {
+        ...state,
+        roomPlayers: action.payload,
+      }
+    
     default:
       return state;
   }

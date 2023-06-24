@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {ReactNode, useEffect, useState} from 'react';
 import svgImage from '../assets/board.svg';
 
 
@@ -11,29 +11,18 @@ import InfoActionPanel from '../components/infoActionPanel';
 
 import {ColorPalette} from "../types/ColorPalette";
 import {Bid} from "../types/Bid";
+import {RoomPlayer} from "../types/RoomPlayer";
+
+import {InitialStore} from "../types/Store";
 
 import "./gameboard.css";
 import {colorPaletteList, GameSignals, InfoActionPanelStates} from "../constants";
 
-import { useSelector, useDispatch } from 'react-redux';
 import globalContext from '../global';
+import { useSelector, useDispatch } from 'react-redux';
 
 interface GameboardProps {
   room_id?: string;
-}
-
-interface EachUserData {
-  username: string;
-  turnNumber: number;
-  colorPalette: ColorPalette;
-  bid: Bid;
-  isTurn: boolean;
-  isEliminated: boolean;
-}
-
-const emptyBid:Bid = {
-  dice: 1,
-  quality: 1
 }
 
 /* TODO REMOVE COMMAND SET LATER */
@@ -49,11 +38,11 @@ const createDummyUsers = (count:number) => {
       quality: Math.floor(Math.random() * 10)
     };
 
-    const newUser:EachUserData = {
+    const newUser:RoomPlayer= {
       username: "random_user_" + i.toString(),
       turnNumber: i,
       colorPalette:colorPalette,
-      bid: bid,
+      currendBid: bid,
       isTurn: false,
       isEliminated: false,
     }
@@ -62,12 +51,16 @@ const createDummyUsers = (count:number) => {
   return userArray;
 };
 
-const renderUser = (userData:EachUserData) => {
+const renderUser = (userData:RoomPlayer) => {
+  if(!userData)
+  {
+    return (<div></div>);
+  }
   return (<UserCard 
             username={userData.username} 
             colorPalette={userData.colorPalette} 
             isTurn={userData.isTurn} 
-            bid={userData.bid} 
+            bid={userData.currendBid} 
             isEliminated={userData.isEliminated}/>
   );
 }
@@ -137,16 +130,52 @@ const renderActionPanel = (username:string, isGameStarted:boolean, isUserElimina
 }
 
 const GameBoard: React.FC<GameboardProps> = ({ room_id }) => {
-
   const username = globalContext.getUsername();
-  const [isTurn, setIsTurn] = useState(false);
-  const [isUserEliminated, setIsUserEliminated] = useState(false);
-  const [isGameStarted, setIsGameStarted] = useState(false);
-  const [isSelfAdmin, setIsSelfAdmin] = useState(false);
-  
-  // todo: set room id to global context if room id is valid
 
-  const [userDatalist, setUserDatalist] = useState(createDummyUsers(3));
+  const isTurn = useSelector((state:InitialStore) => state.isTurn);
+  const isUserEliminated = useSelector((state:InitialStore) => state.isUserEliminated);
+  const isGameStarted = useSelector((state:InitialStore) => state.isGameStarted);
+  const isSelfAdmin = useSelector((state:InitialStore) => state.isSelfAdmin);
+  const roomPlayers = useSelector((state:InitialStore) => state.roomPlayers);
+
+  const dispatch = useDispatch();
+
+  const setIsTurn = (value:boolean) => {
+    dispatch({ type: 'SET_IS_TURN', payload:value});
+  };
+
+  const setIsUserEliminated = (value:boolean) => {
+    dispatch({ type: 'SET_IS_ELIMINATED', payload:value});
+  };
+
+  const setIsGameStarted = (value:boolean) => {
+    dispatch({ type: 'SET_IS_GAME_STARTED', payload:value});
+  };
+
+  const setIsSelfAdmin = (value:boolean) => {
+    dispatch({ type: 'SET_IS_ADMIN', payload:value});
+  };
+
+  const addRoomPlayer = (username:string, player:RoomPlayer) => {
+    //todo get snapshot here
+    //const updatedRoomPlayers =  {...roomPlayers, [username]:player}; 
+    //dispatch({ type: 'SET_ROOM_PLAYERS', payload:updatedRoomPlayers});
+  };
+
+
+  // todo: set room id to global context if room id is valid
+  // TODO CREATE WEBSOCKET INSTANCE HERE
+
+  // todo create websocket connected usercard-bid hook logic
+  // todo add connection state icon to users due to socket data
+  // todo implement bid to user card design
+  // todo fix users card design
+
+  /* TODO REMOVE DUMMY USER CREATION LATER */
+  const dummyUsers = createDummyUsers(1);
+  dummyUsers.forEach((eachRoomPlayer) => {
+    addRoomPlayer(eachRoomPlayer.username, eachRoomPlayer);
+  });
 
   /* TODO REMOVE COMMAND SET LATER */
   (window as any).command = function(command:string){
@@ -166,31 +195,25 @@ const GameBoard: React.FC<GameboardProps> = ({ room_id }) => {
 
       case "set_game_started":
           setIsGameStarted(param.toLowerCase() === "true");
-          setIsTurn(false);
         break;
 
-      case "set_user_data":
-        const newDataList = [...userDatalist]
-        newDataList[0].username = param;
-        setUserDatalist(newDataList);
-        break;
-      
       case "set_admin":
         setIsSelfAdmin(param.toLowerCase() === "true");
       break;
     }
   }
 
-  /* TODO CREATE WEBSOCKET INSTANCE HERE */
-
-  // todo implement redux logic
-  // todo create websocket connected usercard-bid hook logic
-  // todo add connection state icon to users due to socket data
-  // todo create dice input to action panel
-  // todo fix action panel design
-  // todo implement bid to user card design
-  // todo fix users card design
-
+  const userCards = Object.keys(roomPlayers).map(eachUsername => {
+    const playerData = roomPlayers[eachUsername];
+    return (<UserCard 
+      username={playerData.username} 
+      colorPalette={playerData.colorPalette} 
+      isTurn={playerData.isTurn} 
+      bid={playerData.currendBid} 
+      isEliminated={playerData.isEliminated}/>
+      );
+  });
+  
   return (
     <div>
       <Navbar isGameStarted={isGameStarted} isAdmin={isSelfAdmin}/>
@@ -202,25 +225,25 @@ const GameBoard: React.FC<GameboardProps> = ({ room_id }) => {
       <div className="board-container">
           <div className="row">
             <div className='col-4'>
-              {userDatalist.length > 0 && renderUser(userDatalist[0])}
+              {userCards.length > 0 && userCards[0]}
             </div>
             <div className='col-4'>
-              {userDatalist.length > 1 && renderUser(userDatalist[1])}
+              {userCards.length > 1 && userCards[1]}
             </div>
             <div className='col-4'>
-              {userDatalist.length > 2 && renderUser(userDatalist[2])}
+              {userCards.length > 2 && userCards[2]}
             </div>
           </div>
           <br/>
           <div className="row">
             <div className='col-4' id="turn_4">
-              {userDatalist.length > 3 && renderUser(userDatalist[3])}
+              {userCards.length > 3 && userCards[3]}
             </div>
             <div className='col-4' id="turn_5">
-              {userDatalist.length > 4 && renderUser(userDatalist[4])}
+              {userCards.length > 4 && userCards[4]}
             </div>
             <div className='col-4' id="turn_6">
-              {userDatalist.length > 5 && renderUser(userDatalist[5])}
+              {userCards.length > 5 && userCards[5]}
             </div>
             </div>
             <br/>
