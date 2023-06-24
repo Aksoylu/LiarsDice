@@ -121,9 +121,9 @@ const ENGLISH = {
     "button_next": "Next",
     "button_ok": "OK",
 
-    "modal_reconnect_title": "Reconnect Previous Room ?",
-    "modal_reconnect_subtitle": "Looks like you are already joined a room :",
-    "modal_reconnect_subtitle_2": "Do you want to reconnect ?",
+    "modal_reconnect_title": "Liar's Dice",
+    "modal_reconnect_subtitle": "Reconnect Previous Room ?",
+    "modal_reconnect_content": "Looks like you are already joined a room, do you want to reconnect back ?",
     "modal_reconnect_accept_button": "Yes, reconnect",
     "modal_reconnect_decline_button": "No",
 }

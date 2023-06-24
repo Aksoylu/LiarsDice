@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { LanguageSelectorTheme } from "../constants";
 import LanguageSelector from "../components/languageSelector";
 import './welcome.css';
+import svgImage from '../assets/board.svg';
 
 import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
@@ -71,10 +72,16 @@ const getLocaleRoomId = async ()=> {
   const roomDetails = await httpService.getRoomDetails(localeRoomId);
 
   swal.fire({
+    backdrop: `
+        url(${svgImage})
+        center
+        repeat
+    `,
     title: translation.get("modal_reconnect_title"),
     html: <div>
-      <p>{translation.get("modal_reconnect_subtitle")} <br/>{roomDetails}</p>
-      <b>{translation.get("modal_reconnect_subtitle_2")}</b>
+      <b>{translation.get("modal_reconnect_subtitle")}</b>
+      <p>{translation.get("modal_reconnect_content")}</p>
+      <p>{roomDetails}</p>
     </div>,
   
     showCancelButton: true,
@@ -101,11 +108,10 @@ const Welcome: React.FC<WelcomeProps> = ({ room_id, show_reconnect_modal }) => {
 
   const [username, setUsername] = useState(storageUsername);
   const [roomId, setRoomId] = useState(room_id);
-
-  if(show_reconnect_modal)
-  {
-    getLocaleRoomId();
-  }
+  const [isReconnectModalActive, setIsReconnectModalActive] = useState(show_reconnect_modal);
+  
+  if(isReconnectModalActive)
+      getLocaleRoomId();
 
   return (
     <div>
