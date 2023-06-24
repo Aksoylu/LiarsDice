@@ -12,7 +12,15 @@ const initialState = {
   roomPlayers: {},
 };
 
+const addRoomPlayer = (state, action) => {
+  const username = action.payload.username;
+  const playerData = action.payload.player;
+  const updatedRoomPlayers =  {...state.roomPlayers, [username]:playerData}; 
+  return {...state, roomPlayers: updatedRoomPlayers};
+};
+
 const rootReducer = (state = initialState, action) => {
+  let username = "";
   switch (action.type) {
     case "SET_BID_AMOUNT":
       const newAmount =  (action.payload < state.minimumQuality) ? state.minimumQuality : action.payload;
@@ -64,10 +72,19 @@ const rootReducer = (state = initialState, action) => {
         isSelfAdmin: action.payload
       }
     
-    case "SET_ROOM_PLAYERS":
+    case "ADD_ROOM_PLAYER":
+      return addRoomPlayer(state, action);
+
+    case "UPDATE_ROOM_PLAYER":
+      const username = action.payload.username;
+      const propertyKey = action.payload.propertyKey;
+      const value = action.payload.value;
+
+      const updatedRoomPlayer =  {...state.roomPlayers[username], [propertyKey]:value}; 
+      const newRoomPlayers = {...state.roomPlayers, [username]:updatedRoomPlayer};
       return {
         ...state,
-        roomPlayers: action.payload,
+        roomPlayers: newRoomPlayers
       }
     
     default:

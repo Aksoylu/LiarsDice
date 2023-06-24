@@ -157,9 +157,10 @@ const GameBoard: React.FC<GameboardProps> = ({ room_id }) => {
   };
 
   const addRoomPlayer = (username:string, player:RoomPlayer) => {
-    //todo get snapshot here
-    //const updatedRoomPlayers =  {...roomPlayers, [username]:player}; 
-    //dispatch({ type: 'SET_ROOM_PLAYERS', payload:updatedRoomPlayers});
+    dispatch({ type: 'ADD_ROOM_PLAYER', payload:{
+      username: username,
+      player: player,
+    }});
   };
 
 
@@ -170,12 +171,6 @@ const GameBoard: React.FC<GameboardProps> = ({ room_id }) => {
   // todo add connection state icon to users due to socket data
   // todo implement bid to user card design
   // todo fix users card design
-
-  /* TODO REMOVE DUMMY USER CREATION LATER */
-  const dummyUsers = createDummyUsers(1);
-  dummyUsers.forEach((eachRoomPlayer) => {
-    addRoomPlayer(eachRoomPlayer.username, eachRoomPlayer);
-  });
 
   /* TODO REMOVE COMMAND SET LATER */
   (window as any).command = function(command:string){
@@ -199,6 +194,13 @@ const GameBoard: React.FC<GameboardProps> = ({ room_id }) => {
 
       case "set_admin":
         setIsSelfAdmin(param.toLowerCase() === "true");
+      break;
+
+      case "connect_users":
+        const dummyUsers = createDummyUsers(3);
+        dummyUsers.forEach((eachRoomPlayer) => {
+          addRoomPlayer(eachRoomPlayer.username, eachRoomPlayer);
+        });
       break;
     }
   }
