@@ -35,7 +35,7 @@ export const GameSignals = {
 };
 
 export const AllowedPageSize = {
-    minimumWidth: 900,
+    minimumWidth: 1300,
     minimumHeight: 700
 };
 

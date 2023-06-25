@@ -8,4 +8,5 @@ export interface RoomPlayer {
     currendBid: Bid;
     isTurn: boolean;
     isEliminated: boolean;
+    isDisconnected: boolean;
 }

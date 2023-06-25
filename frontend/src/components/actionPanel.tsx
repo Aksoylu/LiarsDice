@@ -42,15 +42,11 @@ const ActionPanel: React.FC<ActionPanelProps> = ({isActionPanelVisible}) => {
             <div className="row card-row">
               <div className='col-4'>
                   <div className='row'>
-                    <div className='col-4 '>
-                      <h4 className='alignCenter'>{translation.get("title_bet_amount")}</h4>
+                    <div className='col-4 offset-2'>
                       <InputSpinner/>
                     </div>
 
-                    <div className='col-4 '></div>
-
-                    <div className='col-4 '>
-                    <h4 className='alignCenter'>{translation.get("title_bet_dice")}</h4>
+                    <div className='col-4 offset-3'>
                       <DicePicker/>
                     </div>
 

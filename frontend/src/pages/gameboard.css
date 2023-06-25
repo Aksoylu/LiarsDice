@@ -62,6 +62,19 @@ body {
   padding: 0 15px;
 }
 
+.offset-2{
+  margin-left: calc(16% - 30px);
+}
+
+.offset-3{
+  margin-left: calc(25% - 30px);
+}
+
+.offset-6{
+  margin-left: calc(50% - 30px);
+}
+
+
 .col-12 {
   width: calc(100% - 90px);
   padding: 0 15px;

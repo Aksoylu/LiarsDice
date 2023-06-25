@@ -11,10 +11,14 @@ import Dice5 from '../assets/dice_5.svg';
 import Dice6 from '../assets/dice_6.svg';
 
 import {InitialStore} from "../types/Store";
+import globalContext from "../global";
+const {getTranslationInstance} = require("../translations/translate");
 
 const diceSkins = [Dice1, Dice2, Dice3, Dice4, Dice5, Dice6];
 
 const DicePicker: React.FC = () => {
+  const translation = getTranslationInstance(globalContext.getLang());
+
   const bidDice:number = useSelector((state:InitialStore) => state.dice);
 
   const dispatch = useDispatch();
@@ -32,6 +36,7 @@ const DicePicker: React.FC = () => {
     <div className="inputSpinner">
         <div className="num-block skin-1">
             <div className="num-in">
+                <h4 className='alignCenter'>{translation.get("title_bet_dice")}</h4>
                 <span className="minus dis" onClick={decraseDice}></span>
                 <span>
                   <img className='diceImage' src={diceSkins[bidDice - 1]} />

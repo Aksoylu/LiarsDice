@@ -1,7 +1,6 @@
 import React, {ReactNode, useEffect, useState} from 'react';
 import svgImage from '../assets/board.svg';
 
-
 import ChatBox from '../components/chatBox';
 import Navbar from '../components/navBar';
 import UserCard from '../components/userCard';
@@ -34,8 +33,8 @@ const createDummyUsers = (count:number) => {
     const randomIndex = Math.floor(Math.random() * colorPaletteList.length);
     const colorPalette:ColorPalette = colorPaletteList[randomIndex];
     const bid:Bid = {
-      dice: Math.floor(Math.random() * 6),
-      quality: Math.floor(Math.random() * 10)
+      dice: Math.floor(Math.random() * 5) + 1,
+      quality: Math.floor(Math.random() * 10) + 1,
     };
 
     const newUser:RoomPlayer= {
@@ -45,25 +44,12 @@ const createDummyUsers = (count:number) => {
       currendBid: bid,
       isTurn: false,
       isEliminated: false,
+      isDisconnected: false,
     }
     userArray.push(newUser);
   }
   return userArray;
 };
-
-const renderUser = (userData:RoomPlayer) => {
-  if(!userData)
-  {
-    return (<div></div>);
-  }
-  return (<UserCard 
-            username={userData.username} 
-            colorPalette={userData.colorPalette} 
-            isTurn={userData.isTurn} 
-            bid={userData.currendBid} 
-            isEliminated={userData.isEliminated}/>
-  );
-}
 
 const pushSignal = (username:string) => {
   
@@ -167,11 +153,6 @@ const GameBoard: React.FC<GameboardProps> = ({ room_id }) => {
   // todo: set room id to global context if room id is valid
   // TODO CREATE WEBSOCKET INSTANCE HERE
 
-  // todo create websocket connected usercard-bid hook logic
-  // todo add connection state icon to users due to socket data
-  // todo implement bid to user card design
-  // todo fix users card design
-
   /* TODO REMOVE COMMAND SET LATER */
   (window as any).command = function(command:string){
     const parsedCommand = command.split(":");
@@ -208,12 +189,13 @@ const GameBoard: React.FC<GameboardProps> = ({ room_id }) => {
   const userCards = Object.keys(roomPlayers).map(eachUsername => {
     const playerData = roomPlayers[eachUsername];
     return (<UserCard 
-      username={playerData.username} 
-      colorPalette={playerData.colorPalette} 
-      isTurn={playerData.isTurn} 
-      bid={playerData.currendBid} 
-      isEliminated={playerData.isEliminated}/>
-      );
+        username={playerData.username} 
+        colorPalette={playerData.colorPalette} 
+        isTurn={playerData.isTurn} 
+        isEliminated={playerData.isEliminated}
+        isDisconnected={playerData.isDisconnected}
+        currentBid={playerData.currendBid} 
+      />);
   });
   
   return (

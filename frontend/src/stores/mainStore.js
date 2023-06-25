@@ -2,9 +2,9 @@ import { createStore } from 'redux';
 
 const initialState = {
   counter: 0,
-  quality: 3,
+  quality: 1,
   minimumQuality: 1,
-  dice: 0,
+  dice: 1,
   isTurn: false,
   isUserEliminated: false,
   isGameStarted: false,
