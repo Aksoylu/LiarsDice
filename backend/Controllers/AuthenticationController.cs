@@ -1,3 +1,6 @@
+using System.Data;
+using System.Security.Authentication;
+using System.Net;
 using Microsoft.AspNetCore.Mvc;
 
 namespace backend.Controllers;
@@ -15,23 +18,42 @@ public class AuthenticationController : ControllerBase
         _database = database;
     }
 
-    [HttpPost("/auth_user")]
-    public ActionResult<string> authUser()
+    [HttpPost("/create_authentication")]
+    public ActionResult<Object> authUser()
     {
-        String user_id = Request.Form["user_id"].ToString();
         String username = Request.Form["username"].ToString();
-        String token = _jwtHelper.GenerateJwtToken(user_id, username);
-        _database.doSomething(Convert.ToInt32(user_id));
+        String jwtToken = _jwtHelper.GenerateJwtToken(username);
+        
+        Authentication newUser = new Authentication();
+        newUser.AuthKey = jwtToken;
+        newUser.Username = username;
 
-        return token;
+        _database.getDatabase().AuthenticationTable?.Add(newUser);
+        this._database.getDatabase().SaveChanges();
+        
+        var response = Utility.CreateHttpResponse("auth_user_success", HttpStatusCode.OK);
+        response.Add("jtw_token", jwtToken);
+        return response;
     }
 
-    // todo
-    [HttpPost("/is_auth")]
-    public ActionResult<Boolean> isAuthValid()
+    /* If user has a jwt in browser cookie, then instead login will be able invoke */
+    [HttpPost("/login")]
+    public ActionResult<Object> isAuthValid()
     {
-        String jwtToken = Request.Form["jwt_token"].ToString();
-        String username = Request.Form["username"].ToString();
-        return true;
+        String jwtToken = Request.Headers["jwt_token"].ToString();
+        if(jwtToken == null || jwtToken.Length < 1 )
+        {
+            throw new AuthenticationException("JWT Token should placed");
+        }
+        
+        Authentication? authUser = _database.getDatabase().AuthenticationTable?.FirstOrDefault(customer => customer.AuthKey == jwtToken) ?? null;
+        if(authUser == null)
+        {
+            throw new DataException("User is not found");
+        }
+
+        var response = Utility.CreateHttpResponse("login_success", HttpStatusCode.OK);
+        response.Add("username", authUser?.Username);
+        return response;
     }
 }

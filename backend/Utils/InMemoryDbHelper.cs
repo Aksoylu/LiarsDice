@@ -1,23 +1,51 @@
 using Microsoft.EntityFrameworkCore;
 
-public class Employee
+public class Authentication
 {
     public int Id { get; set; }
-    public string Name { get; set; }
-    public string Surname { get; set; }
-    public List<Customer> Customers { get; set; }
+    public string AuthKey { get; set; }
+    public string Username { get; set; }
+    public string? SocketId { get; set; }
+
 }
 
-public class Customer
+public class RoomPlayer
 {
     public int Id { get; set; }
-    public string Name { get; set; }
+
+    public int UserId { get; set;}
+    public string? Username { get; set; }
+    public Bid? UserBid { get; set; }
+    public Boolean IsTurn { get; set; }
+    public Boolean IsElected { get; set; }
+    public string? SocketId { get; set; }
+
+}
+
+public class Bid
+{
+    public int Id { get; set;}
+    public int Quality { get; set; }
+    public int Dice {get; set;}
+}
+
+public class GameRoom
+{
+    public int Id { get; set; }
+    public string? Name { get; set; }
+    public List<RoomPlayer>? RoomPlayers { get; set; }
+    public Boolean IsGameStarted {get; set;}
+    public int TurnNumber { get; set; }
+
+    public RoomPlayer AdminUser { get; set;}
+    
+
 }
 
 public class DatabaseContext : DbContext
 {
-    public DbSet<Employee> Employees { get; set; }
-    public DbSet<Customer> Customers { get; set; }
+    public DbSet<Authentication>? AuthenticationTable { get; set; }
+    public DbSet<GameRoom>? GameRooms { get; set; }
  
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
@@ -40,24 +68,45 @@ public class DatabaseHelper{
         return this._databaseContext;
     }
 
-    public void doSomething(int id)
+    public Authentication? tokenAuth(String jwtToken)
     {
-        Customer cf = new Customer();
-        cf.Name = "test";
-        cf.Id = 1;
-        
-        this._databaseContext.Customers.Add(cf);
+        return this._databaseContext.AuthenticationTable?.FirstOrDefault(customer => customer.AuthKey == jwtToken);
+    }
+
+    public int getLastAuthenticationUid()
+    {
+        return this._databaseContext.AuthenticationTable?.OrderBy(x=>x.Id).LastOrDefault()?.Id ?? 0;
+    }
+
+    public int createNewRoom(String roomName, Authentication user)
+    {
+        GameRoom newGameRoom = new GameRoom();
+        newGameRoom.Name = roomName;
+        newGameRoom.IsGameStarted = false;
+        newGameRoom.TurnNumber = 0;
+
+
+        RoomPlayer newRoomPlayer = new RoomPlayer();
+        newRoomPlayer.Username = user.Username;
+        newRoomPlayer.UserId = user.Id;
+        newRoomPlayer.SocketId = user.SocketId;
+
+        newGameRoom.AdminUser = newRoomPlayer;
+        newGameRoom.RoomPlayers?.Add(newRoomPlayer);
+        this._databaseContext.GameRooms?.Add(newGameRoom);
         this._databaseContext.SaveChanges();
+        return 0;
+    }
 
+    public int joinRoom(GameRoom room, Authentication user)
+    {
+        RoomPlayer newRoomPlayer = new RoomPlayer();
+        newRoomPlayer.Username = user.Username;
+        newRoomPlayer.UserId = user.Id;
+        newRoomPlayer.SocketId = user.SocketId;
 
-        Customer? dbEntry = this._databaseContext.Customers.FirstOrDefault(customer => customer.Id == id);
-        if(dbEntry != null)
-        {
-            Console.WriteLine(dbEntry?.Name);
-        }
-        else
-        {
-            Console.WriteLine("empty");
-        }
+        room.RoomPlayers?.Add(newRoomPlayer);
+        this._databaseContext.SaveChanges();
+        return 0;
     }
 }

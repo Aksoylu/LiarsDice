@@ -14,16 +14,17 @@ public class JwtHelper
         _configuration = configuration;
     }
 
-    public string GenerateJwtToken(string userId, string username)
+    public string GenerateJwtToken(string username)
     {
         var tokenHandler = new JwtSecurityTokenHandler();
         var key = Encoding.ASCII.GetBytes(_configuration["JwtSettings:Key"]);
 
+        String randomId = "...";
         var tokenDescriptor = new SecurityTokenDescriptor
         {
             Subject = new ClaimsIdentity(new[]
             {
-                new Claim(ClaimTypes.NameIdentifier, userId),
+                new Claim(ClaimTypes.NameIdentifier, randomId),
                 new Claim(ClaimTypes.Name, username)
             }),
             Expires = DateTime.UtcNow.AddDays(7),

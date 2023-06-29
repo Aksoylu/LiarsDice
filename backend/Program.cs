@@ -29,7 +29,7 @@ app.MapControllers();
 /* Configuration for Realtime Communication */
 app.UseEndpoints(endpoints =>
 {
-    endpoints.MapHub<RoomController>("/chat");
+    endpoints.MapHub<RoomController>("/room");
 });
 
 app.Run();
