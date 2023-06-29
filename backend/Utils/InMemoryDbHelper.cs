@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 
-class Employee
+public class Employee
 {
     public int Id { get; set; }
     public string Name { get; set; }
@@ -8,13 +8,13 @@ class Employee
     public List<Customer> Customers { get; set; }
 }
 
-class Customer
+public class Customer
 {
     public int Id { get; set; }
     public string Name { get; set; }
 }
 
-class DatabaseContext : DbContext
+public class DatabaseContext : DbContext
 {
     public DbSet<Employee> Employees { get; set; }
     public DbSet<Customer> Customers { get; set; }
@@ -33,17 +33,23 @@ public class DatabaseHelper{
         DatabaseContext databaseContext = new DatabaseContext();
         databaseContext.Database.EnsureCreated();
         this._databaseContext = databaseContext;
+    }
 
+    public DatabaseContext getDatabase()
+    {
+        return this._databaseContext;
+    }
+
+    public void doSomething(int id)
+    {
         Customer cf = new Customer();
         cf.Name = "test";
         cf.Id = 1;
         
         this._databaseContext.Customers.Add(cf);
         this._databaseContext.SaveChanges();
-    }
 
-    public void doSomething(int id)
-    {
+
         Customer? dbEntry = this._databaseContext.Customers.FirstOrDefault(customer => customer.Id == id);
         if(dbEntry != null)
         {

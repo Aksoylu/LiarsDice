@@ -22,6 +22,7 @@ public class AuthenticationController : ControllerBase
         String username = Request.Form["username"].ToString();
         String token = _jwtHelper.GenerateJwtToken(user_id, username);
         _database.doSomething(Convert.ToInt32(user_id));
+
         return token;
     }
 

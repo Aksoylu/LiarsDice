@@ -3,12 +3,13 @@ using Microsoft.Extensions.DependencyInjection;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+/* Load config from appsettings.json */
 var configuration = new ConfigurationBuilder()
             .SetBasePath(Directory.GetCurrentDirectory())
             .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
             .Build();
 
+/* Create JWT helper */
 JwtHelper jwtHelper = new JwtHelper(configuration);
 
 /* Create In-memory database helper */
