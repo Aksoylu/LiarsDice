@@ -19,7 +19,6 @@ public class RoomController : Hub
         // todo: find existing user datas and bind to signal
         privateSignal["room_users"] = "user data";
         await Clients.Client(Context.ConnectionId).SendAsync(SignalTypes.PrivateSignal, privateSignal);
-
     }
 
     public async Task leave_room(string roomName)
