@@ -3,9 +3,10 @@ using Microsoft.EntityFrameworkCore;
 public class Authentication
 {
     public int Id { get; set; }
-    public string AuthKey { get; set; }
-    public string Username { get; set; }
-    public string? SocketId { get; set; }
+    public string? AuthKey { get; set; }
+    public string? Username { get; set; }
+    public string? SocketId {get; set;}
+    public string? RoomName {get; set;}
 
 }
 
@@ -18,8 +19,8 @@ public class RoomPlayer
     public Bid? UserBid { get; set; }
     public Boolean IsTurn { get; set; }
     public Boolean IsElected { get; set; }
-    public string? SocketId { get; set; }
-
+    public string? SocketId {get; set;}
+    public int lastOnlineTimestamp {get; set;}
 }
 
 public class Bid
@@ -37,7 +38,7 @@ public class GameRoom
     public Boolean IsGameStarted {get; set;}
     public int TurnNumber { get; set; }
 
-    public RoomPlayer AdminUser { get; set;}
+    public RoomPlayer? AdminUser { get; set;}
     
 
 }
@@ -71,6 +72,11 @@ public class DatabaseHelper{
     public Authentication? tokenAuth(String jwtToken)
     {
         return this._databaseContext.AuthenticationTable?.FirstOrDefault(customer => customer.AuthKey == jwtToken);
+    }
+
+    public Authentication? getUserByUsername(String username)
+    {
+        return this._databaseContext.AuthenticationTable?.FirstOrDefault(customer => customer.Username == username);
     }
 
     public int getLastAuthenticationUid()
@@ -108,5 +114,15 @@ public class DatabaseHelper{
         room.RoomPlayers?.Add(newRoomPlayer);
         this._databaseContext.SaveChanges();
         return 0;
+    }
+
+    public GameRoom? getRoomByName(String roomName)
+    {
+        return this._databaseContext.GameRooms?.FirstOrDefault(room => room.Name == roomName);
+    }
+
+    public RoomPlayer? getRoomPlayer(GameRoom room, String username)
+    {
+        return room.RoomPlayers?.FirstOrDefault(player => player.Username == username);
     }
 }

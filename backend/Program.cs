@@ -32,4 +32,7 @@ app.UseEndpoints(endpoints =>
     endpoints.MapHub<RoomController>("/room");
 });
 
+/* Create user mockup */
+Utility.createUserMockup(databaseHelper);
+
 app.Run();

@@ -17,7 +17,7 @@ public class RoomController : Hub
     public async Task socketAuth(string jwtToken)
     {
         Authentication? user = _database.tokenAuth(jwtToken);
-        if(user == null)
+        if(user == null || user.Username == null)
         {
             var userNotFoundSignal = Utility.CreateHubSignal("authentication_failed");
             await Clients.Client(Context.ConnectionId).SendAsync(SignalTypes.PrivateSignal, userNotFoundSignal);
@@ -52,7 +52,10 @@ public class RoomController : Hub
 
         /* Create room on database & Do database processes between room and user */
         this._database.createNewRoom(roomName, user);
-            
+        
+        /* Set room name to user's authentication */
+        user.RoomName = roomName;
+
         /* Add current user to socket group with room name */
         await Groups.AddToGroupAsync(Context.ConnectionId, roomName);
 
@@ -66,7 +69,7 @@ public class RoomController : Hub
 
         /* Auth user */
         Authentication? user = _database.tokenAuth(jwtToken);
-        if(user == null)
+        if(user == null || user.Username == null)
         {
             var userNotFoundSignal = Utility.CreateHubSignal("authentication_failed");
             await Clients.Client(Context.ConnectionId).SendAsync(SignalTypes.PrivateSignal, userNotFoundSignal);
@@ -90,30 +93,143 @@ public class RoomController : Hub
             return;
         }
 
+        /* Check there is no user with same name in room */
+        RoomPlayer? existingPlayer = room.RoomPlayers?.FirstOrDefault(roomPlayer => roomPlayer.Username == user.Username);
+        if(existingPlayer != null)
+        {
+            var playerWithNameAlreadyExistInRoomSignal = Utility.CreateHubSignal("player_with_name_already_exist_in_room");
+            await Clients.Client(Context.ConnectionId).SendAsync(SignalTypes.PrivateSignal, playerWithNameAlreadyExistInRoomSignal);
+            return;
+        }
+
         /* join room on database & Do database processes between room and user */
         this._database.joinRoom(room, user);
 
         /* Add current user to socket group with room name */
         await Groups.AddToGroupAsync(Context.ConnectionId, roomName);
 
-
         /* Send success signal to user. This signal also contains current game room status */
         var privateSignal = Utility.CreateHubSignal("room_join_success");
-        // todo: find existing user datas and bind to signal here 
-        privateSignal["room_users"] = room.RoomPlayers.ToString(); 
+        privateSignal["room_users"] = room.RoomPlayers.ToString(); // TODO:  need test
         await Clients.Client(Context.ConnectionId).SendAsync(SignalTypes.PrivateSignal, privateSignal);
 
         /* Send new user join signal to all remain users in room */
-        var roomWideSignal = Utility.CreateHubSignal("room_join_success");
-
-        // todo: find userhash & username from connection id and place instead of connection id
-        roomWideSignal.Add("new_joined_username", user.Username);
+        var roomWideSignal = Utility.CreateHubSignal("user_joined");
+        roomWideSignal.Add("user_joined", user.Username);
         await Clients.Group(roomName).SendAsync(SignalTypes.RoomSignal, roomWideSignal);
     }
 
-    public async Task leave_room(string roomName)
+    public async Task reconnectRoom(string jwtToken, string roomName)
     {
+        /* Auth user */
+        Authentication? user = _database.tokenAuth(jwtToken);
+        if(user == null || user.Username == null)
+        {
+            var userNotFoundSignal = Utility.CreateHubSignal("authentication_failed");
+            await Clients.Client(Context.ConnectionId).SendAsync(SignalTypes.PrivateSignal, userNotFoundSignal);
+            return;
+        }
+
+        /* Check room is exist by room name */
+        GameRoom? room =_database.getDatabase().GameRooms?.FirstOrDefault(room => room.Name == roomName);
+        if(room == null)
+        {
+            var roomNotExistSignal = Utility.CreateHubSignal("room_not_exist");
+            await Clients.Client(Context.ConnectionId).SendAsync(SignalTypes.PrivateSignal, roomNotExistSignal);
+            return;
+        }
+
+        /* Check there should be an user with same name in room */
+        RoomPlayer? existingPlayer = room.RoomPlayers?.FirstOrDefault(roomPlayer => roomPlayer.Username == user.Username);
+        if(existingPlayer == null)
+        {
+            var playerNotExistInRoom = Utility.CreateHubSignal("player_not_exist_in_room");
+            await Clients.Client(Context.ConnectionId).SendAsync(SignalTypes.PrivateSignal, playerNotExistInRoom);
+            return;
+        }
+
+        /* update user socket */
+        user.SocketId = Context.ConnectionId;
+
+        /* Set users last online */
+        existingPlayer.lastOnlineTimestamp = DateTime.Now.Millisecond;
+
+        /* Send success signal to user. This signal also contains current game room status */
+        var privateSignal = Utility.CreateHubSignal("room_join_success");
+        privateSignal["room_users"] = room.RoomPlayers.ToString(); // TODO:  need test
+        await Clients.Client(Context.ConnectionId).SendAsync(SignalTypes.PrivateSignal, privateSignal);
+
+        /* Send user reconnect signal to all remain users in room */
+        var roomWideSignal = Utility.CreateHubSignal("user_reconnected");
+        roomWideSignal.Add("reconnected_username", user.Username);
+        await Clients.Group(roomName).SendAsync(SignalTypes.RoomSignal, roomWideSignal);
+    }
+
+    public async Task leaveRoom(string jwtToken, string roomName)
+    {
+        /* Auth user */
+        Authentication? user = _database.tokenAuth(jwtToken);
+        if(user == null || user.Username == null)
+        {
+            var userNotFoundSignal = Utility.CreateHubSignal("authentication_failed");
+            await Clients.Client(Context.ConnectionId).SendAsync(SignalTypes.PrivateSignal, userNotFoundSignal);
+            return;
+        }
+        
+        /* Check is room exist */
+        GameRoom? currentRoom = this._database.getRoomByName(roomName);
+        if(currentRoom == null)
+        {
+            var roomNotFoundSignal = Utility.CreateHubSignal("room_not_found");
+            await Clients.Client(Context.ConnectionId).SendAsync(SignalTypes.PrivateSignal, roomNotFoundSignal);
+            return;
+        }
+
+        /* Remove user from room database */
+        RoomPlayer? player = this._database.getRoomPlayer(currentRoom, user.Username);
+        if(player != null)
+        {
+            currentRoom.RoomPlayers?.Remove(player);
+            this._database.getDatabase().SaveChanges();
+        }
+
+        /* Remove user from socket group */
         await Groups.RemoveFromGroupAsync(Context.ConnectionId, roomName);
-        await Clients.Client(Context.ConnectionId).SendAsync(SignalTypes.PrivateSignal, "leave_room_success");
+
+        /* Send successfully leave signal to user. */
+        var privateSignal = Utility.CreateHubSignal("room_leave_success");
+        await Clients.Client(Context.ConnectionId).SendAsync(SignalTypes.PrivateSignal, privateSignal);
+
+        /* Send user leave signal to all remain users in room */
+        var roomWideSignal = Utility.CreateHubSignal("user_leaved");
+        roomWideSignal.Add("user_leaved", user.Username);
+        await Clients.Group(roomName).SendAsync(SignalTypes.RoomSignal, roomWideSignal);
+
+        /* Select another user as admin or kill room if leaving user is admin */
+        if(currentRoom.AdminUser?.Username == user.Username)
+        {
+            if(currentRoom.RoomPlayers != null && currentRoom.RoomPlayers.Count > 0)
+            {
+                Random random = new Random(DateTime.Now.Millisecond);
+                int randomIndex = random.Next(0, currentRoom.RoomPlayers.Count - 1);
+                RoomPlayer userToBeAdmin = currentRoom.RoomPlayers.ElementAt(randomIndex);
+                currentRoom.AdminUser = userToBeAdmin;
+
+                /* Send set admin signal to user. */
+                var setAdminPrivateSignal = Utility.CreateHubSignal("set_admin");
+                await Clients.Client(Context.ConnectionId).SendAsync(SignalTypes.PrivateSignal, setAdminPrivateSignal);
+
+                /* Send new admin signal to all remain users in room */
+                var setAdminRoomWideSignal = Utility.CreateHubSignal("new_admin");
+                setAdminRoomWideSignal.Add("new_admin", userToBeAdmin.Username);
+                await Clients.Group(roomName).SendAsync(SignalTypes.RoomSignal, setAdminRoomWideSignal);
+                this._database.getDatabase().SaveChanges();
+            }
+            else
+            {
+                this._database.getDatabase().GameRooms?.Remove(currentRoom);
+                this._database.getDatabase().SaveChanges();
+            }
+        }
     }
 }
