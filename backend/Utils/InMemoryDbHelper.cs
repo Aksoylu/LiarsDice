@@ -88,22 +88,22 @@ public class DatabaseHelper{
 
     public Authentication? tokenAuth(String jwtToken)
     {
-        return this._databaseContext.AuthenticationTable?.FirstOrDefault(customer => customer.AuthKey == jwtToken);
+        return this._databaseContext.AuthenticationTable?.FirstOrDefault(user => user.AuthKey == jwtToken) ?? null;
     }
 
     public Authentication? getUserByUsername(String username)
     {
-        return this._databaseContext.AuthenticationTable?.FirstOrDefault(customer => customer.Username == username);
+        return this._databaseContext.AuthenticationTable?.FirstOrDefault(user => user.Username == username) ?? null;
     }
 
     public Authentication? getUserBySocketId(String socketId)
     {
-        return this._databaseContext.AuthenticationTable?.FirstOrDefault(customer => customer.SocketId == socketId);
+        return this._databaseContext.AuthenticationTable?.FirstOrDefault(user => user.SocketId == socketId) ?? null;
     }
 
     public int getLastAuthenticationUid()
     {
-        return this._databaseContext.AuthenticationTable?.OrderBy(x=>x.Id).LastOrDefault()?.Id ?? 0;
+        return this._databaseContext.AuthenticationTable?.OrderBy(user => user.Id).LastOrDefault()?.Id ?? 0;
     }
     
     public int createNewRoom(String roomName, Authentication user)
@@ -188,14 +188,9 @@ public class DatabaseHelper{
         return room.RoomPlayers.ElementAt(randomPlayerIndex);
     }
 
-    public Boolean isRoomPlayerExist(GameRoom room, Authentication user)
-    {
-        return (this.getRoomPlayerByName(room, user) != null);
-    }
-
     public RoomPlayer? getRoomPlayerByName(GameRoom room, Authentication user)
     {
-        return room.RoomPlayers.OrderBy(player => player.Username == user.Username).LastOrDefault();
+        return room.RoomPlayers.FirstOrDefault(player => player.Username == user.Username);
     }
 
     public void setNewAdmin(GameRoom room, RoomPlayer newAdmin)

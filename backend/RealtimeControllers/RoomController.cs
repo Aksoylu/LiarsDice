@@ -25,8 +25,9 @@ public class RoomController : Hub
             await Clients.Client(Context.ConnectionId).SendAsync(SignalTypes.PrivateSignal, userNotFoundSignal);
             return;
         }
+        _database.updateUserSocket(user, Context.ConnectionId);
 
-        user.SocketId = Context.ConnectionId;
+        /* Send success signal to client */
         var privateSignal = Utility.CreateHubSignal("socket_auth_success");
         privateSignal.Add("username", user.Username);
         await Clients.Client(user.SocketId).SendAsync(SignalTypes.PrivateSignal, privateSignal);
@@ -42,7 +43,9 @@ public class RoomController : Hub
             await Clients.Client(Context.ConnectionId).SendAsync(SignalTypes.PrivateSignal, userNotFoundSignal);
             return;
         }
-        
+        _database.updateUserSocket(user, Context.ConnectionId);
+
+
         /* Check is room already exist by room name */
         GameRoom? room =_database.getDatabase().GameRooms?.FirstOrDefault(room => room.Name == roomName);
         if(room != null)
@@ -73,7 +76,7 @@ public class RoomController : Hub
             await Clients.Client(Context.ConnectionId).SendAsync(SignalTypes.PrivateSignal, userNotFoundSignal);
             return;
         }
-
+        _database.updateUserSocket(user, Context.ConnectionId);
 
         /* Check room is exist by room name */
         GameRoom? currentRoom = this._database.getRoomByName(roomName);
@@ -85,7 +88,6 @@ public class RoomController : Hub
 
         }
 
-
         /* Check is room size available */
         if(currentRoom.RoomPlayers?.Count >= RuleBase.maximumPlayerPerRoom)
         {
@@ -95,7 +97,7 @@ public class RoomController : Hub
         }
 
         /* Check there is no user with same name in room */
-        if(this._database.isRoomPlayerExist(currentRoom, user))
+        if(this._database.getRoomPlayerByName(currentRoom, user) != null)
         {
             var playerWithNameAlreadyExistInRoomSignal = Utility.CreateHubSignal("player_with_name_already_exist_in_room");
             await Clients.Client(Context.ConnectionId).SendAsync(SignalTypes.PrivateSignal, playerWithNameAlreadyExistInRoomSignal);
@@ -129,6 +131,8 @@ public class RoomController : Hub
             await Clients.Client(Context.ConnectionId).SendAsync(SignalTypes.PrivateSignal, userNotFoundSignal);
             return;
         }
+        _database.updateUserSocket(user, Context.ConnectionId);
+
 
         /* Check room is exist by room name */
         GameRoom? currentRoom = this._database.getRoomByName(roomName);
@@ -163,10 +167,8 @@ public class RoomController : Hub
         roomWideSignal.Add("reconnected_username", user.Username);
         await Clients.Group(roomName).SendAsync(SignalTypes.RoomSignal, roomWideSignal);
 
-
         /* Add current user back to socket group with room name */
         await Groups.AddToGroupAsync(Context.ConnectionId, roomName);
-
     }
 
     public async Task leaveRoom(string jwtToken, string roomName)
@@ -179,6 +181,8 @@ public class RoomController : Hub
             await Clients.Client(Context.ConnectionId).SendAsync(SignalTypes.PrivateSignal, userNotFoundSignal);
             return;
         }
+        _database.updateUserSocket(user, Context.ConnectionId);
+
         
         /* Check is room exist */
         if(!this._database.isRoomExist(roomName))
@@ -241,32 +245,21 @@ public class RoomController : Hub
     {
         /* Get auth user by socket id */
         Authentication? user = this._database.getUserBySocketId(Context.ConnectionId);
-
         if(user == null)
-        {
-            Console.WriteLine("step 1");
             return;
-        }
 
         /* Set auth users socket id to null */
         this._database.updateUserSocket(user, null);
 
-        Console.WriteLine("room name is : " + user.RoomName);
         /* Get users room by room name */
         GameRoom? currentRoom = this._database.getRoomByName(user.RoomName);
         if(currentRoom == null)
-        {
-            Console.WriteLine("step 2");
             return;
-        }
 
         /* Get room player by room and user info */
         RoomPlayer roomPlayer = this._database.getRoomPlayerByName(currentRoom, user);
         if(roomPlayer == null)
-        {
-            Console.WriteLine("step 3");
             return;
-        }
 
         /* Set Room Player's lastOnlineTimestamp and IsConnectionActive as disconnected */
         this._database.makeUserDisconnected(roomPlayer);
@@ -278,8 +271,6 @@ public class RoomController : Hub
 
         /* Remove user from socket group */
         await Groups.RemoveFromGroupAsync(Context.ConnectionId, user.RoomName);
-
-        Console.WriteLine("user disconnected: " + user.Username);
 
         /* Overrided actions */
         await base.OnDisconnectedAsync(exception);
