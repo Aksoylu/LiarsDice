@@ -36,7 +36,6 @@ public static class Utility {
 
     public static void assertUnauthentication(HttpRequest request)
     {
-
         String jwtToken = request.Headers["jwt_token"].ToString();
         if(jwtToken == null || jwtToken.Length < 1 )
         {
@@ -53,13 +52,11 @@ public static class Utility {
         
         /* Create user 2 user */
         Authentication user2 = new Authentication();
-        user1.AuthKey = "jtw_user2";
-        user1.Username = "umit_2#0000";
+        user2.AuthKey = "jtw_user2";
+        user2.Username = "umit_2#0000";
 
         databaseHelper.getDatabase().AuthenticationTable?.Add(user1);
         databaseHelper.getDatabase().AuthenticationTable?.Add(user2);
-        databaseHelper.getDatabase().SaveChanges();
-
-        
+        databaseHelper.getDatabase().SaveChanges();   
     }
 }
