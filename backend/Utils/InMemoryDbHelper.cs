@@ -37,11 +37,24 @@ public class RoomPlayer
 
 public class Bid
 {
+    public Bid(int amount, int dice)
+    {
+        this.Amount = amount;
+        this.Dice = dice;
+    }
+
     public int Id { get; set;}
 
-    public int Quality { get; set; }
+    public int Amount { get; set; }
 
     public int Dice {get; set;}
+}
+
+public class PlayerAction{
+    public int Type {get; set;}
+    public int? Amount {get; set;}
+
+    public int? Dice {get; set;}
 }
 
 public class GameRoom
@@ -106,7 +119,7 @@ public class DatabaseHelper{
         return this._databaseContext.AuthenticationTable?.OrderBy(user => user.Id).LastOrDefault()?.Id ?? 0;
     }
     
-    public int createNewRoom(String roomName, Authentication user)
+    public void createNewRoom(String roomName, Authentication user)
     {
         user.RoomName = roomName;
 
@@ -128,7 +141,6 @@ public class DatabaseHelper{
         newGameRoom.RoomPlayers.Add(newRoomPlayer);
         this._databaseContext.GameRooms?.Add(newGameRoom);
         this._databaseContext.SaveChanges();
-        return 0;
     }
 
     public void joinRoom(GameRoom room, Authentication user)
