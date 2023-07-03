@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.SignalR;
 
 public partial class InitialController : Hub
 {
+    // TODO
     public async Task playerAction(string jwtToken, string roomName, PlayerAction playerAction)
     {
         /* Auth user */
@@ -35,7 +36,6 @@ public partial class InitialController : Hub
         await processPlayerAction(user, currentRoom, roomPlayer, playerAction);
     }
 
-    // todo
     private async Task processPlayerAction(Authentication user, GameRoom room, RoomPlayer player, PlayerAction playerAction)
     {
         Console.WriteLine("amount:" + playerAction.Amount.ToString());
@@ -45,7 +45,9 @@ public partial class InitialController : Hub
         if(player.IsElected || player.IsInspector || !player.IsTurn)
         {
             var turnFailureSignal = Utility.CreateHubSignal("room_not_exist");
-            await Clients.Client(user.SocketId).SendAsync(SignalTypes.PrivateSignal, turnFailureSignal);
+            if(user.SocketId != null)
+                await Clients.Client(user.SocketId).SendAsync(SignalTypes.PrivateSignal, turnFailureSignal);
+
             return;
         }
 
@@ -69,6 +71,7 @@ public partial class InitialController : Hub
 
     }
 
+    // TODO
     private void declareBid(GameRoom room, RoomPlayer player, PlayerAction action)
     {
 

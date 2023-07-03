@@ -16,11 +16,13 @@ public class JwtHelper
 
     public string GenerateJwtToken(string username)
     {
-        var tokenHandler = new JwtSecurityTokenHandler();
-        var key = Encoding.ASCII.GetBytes(_configuration["JwtSettings:Key"]);
+        String jwtHashKey = _configuration["JwtSettings:Key"] ?? "base_key";
+        String randomId =  Utility.createRandomHash(32);
 
-        String randomId = "...";
-        var tokenDescriptor = new SecurityTokenDescriptor
+        JwtSecurityTokenHandler tokenHandler = new JwtSecurityTokenHandler();
+        byte[] jtwEncodedKey = Encoding.ASCII.GetBytes(jwtHashKey);
+
+        SecurityTokenDescriptor tokenDescriptor = new SecurityTokenDescriptor
         {
             Subject = new ClaimsIdentity(new[]
             {
@@ -28,10 +30,10 @@ public class JwtHelper
                 new Claim(ClaimTypes.Name, username)
             }),
             Expires = DateTime.UtcNow.AddDays(7),
-            SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
+            SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(jtwEncodedKey), SecurityAlgorithms.HmacSha256Signature)
         };
 
-        var token = tokenHandler.CreateToken(tokenDescriptor);
+        SecurityToken token = tokenHandler.CreateToken(tokenDescriptor);
         return tokenHandler.WriteToken(token);
     }
 }

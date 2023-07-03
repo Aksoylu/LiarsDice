@@ -16,7 +16,7 @@ public partial class InitialController : Hub
     {
         /* Get auth user by socket id */
         Authentication? user = this._database.getUserBySocketId(Context.ConnectionId);
-        if(user == null)
+        if(user == null || user.RoomName == null || user.Username == null)
             return;
 
         /* Set auth users socket id to null */
@@ -28,7 +28,7 @@ public partial class InitialController : Hub
             return;
 
         /* Get room player by room and user info */
-        RoomPlayer roomPlayer = this._database.getRoomPlayerByName(currentRoom, user);
+        RoomPlayer? roomPlayer = this._database.getRoomPlayerByName(currentRoom, user);
         if(roomPlayer == null)
             return;
 
@@ -61,6 +61,8 @@ public partial class InitialController : Hub
         /* Send success signal to client */
         var privateSignal = Utility.CreateHubSignal("socket_auth_success");
         privateSignal.Add("username", user.Username);
-        await Clients.Client(user.SocketId).SendAsync(SignalTypes.PrivateSignal, privateSignal);
+
+        if(user.SocketId != null)
+            await Clients.Client(user.SocketId).SendAsync(SignalTypes.PrivateSignal, privateSignal);
     }
 }

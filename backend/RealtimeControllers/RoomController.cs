@@ -218,11 +218,17 @@ public partial class InitialController : Hub
             if(currentRoom.RoomPlayers != null && currentRoom.RoomPlayers.Count > 0)
             {
                 RoomPlayer randomPlayer = this._database.pickRandomRoomPlayer(currentRoom);
+                while(randomPlayer == null || randomPlayer.Username == null)
+                {
+                    randomPlayer = this._database.pickRandomRoomPlayer(currentRoom);
+                }
+
                 this._database.setNewAdmin(currentRoom, randomPlayer);
 
                 /* Send set admin signal to user. */
                 var setAdminPrivateSignal = Utility.CreateHubSignal("set_admin");
-                await Clients.Client(randomPlayer?.SocketId).SendAsync(SignalTypes.PrivateSignal, setAdminPrivateSignal);
+                if(randomPlayer.SocketId != null)
+                    await Clients.Client(randomPlayer.SocketId).SendAsync(SignalTypes.PrivateSignal, setAdminPrivateSignal);
 
                 /* Send new admin signal to all remain users in room */
                 var setAdminRoomWideSignal = Utility.CreateHubSignal("new_admin");
