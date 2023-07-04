@@ -70,6 +70,10 @@ button.ghost {
 	border-color: #FFFFFF;
 }
 
+.logout_button{
+	margin-top: 10px;
+}
+
 form {
 	background-color: #FFFFFF;
 	display: flex;
@@ -261,4 +265,9 @@ footer a {
     align-items: center;
     top: 50%;
     left: 50%;
+}
+
+.username_input{
+	background-color: #535353;
+	color: #42cb74;
 }

@@ -1,4 +1,5 @@
 import React from 'react';
+import "./navBar.css";
 
 import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
@@ -7,10 +8,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faRightFromBracket, faCircleInfo, faDice, faLanguage, faGamepad } from '@fortawesome/free-solid-svg-icons';
 import LanguageSelector from "./languageSelector";
 import {LanguageSelectorTheme} from "../constants";
-
-import "./navBar.css";
-
-import websocketService from "../services/websocketService";
+import signalIrService from "../services/signalIrService";
 
 const swal = withReactContent(Swal);
 const {getTranslationInstance} = require("../translations/translate");
@@ -74,12 +72,12 @@ const Navbar: React.FC<NavbarProps> = ({isAdmin, isGameStarted}) => {
    * @todo implement
    * @description: show modal first, if applies, broke websocket connection, clear local room storage and navigate to main screen
    */
-  const pushExitRoomModal = async () => {
-
+  const pushLeaveRoomModal = async () => {
+    
   }
 
   const startGameSignal = async () => {
-    websocketService.sendStartGameSignal();
+    //signalIrService.sendStartGameSignal();
   };
   
   return (
@@ -95,7 +93,7 @@ const Navbar: React.FC<NavbarProps> = ({isAdmin, isGameStarted}) => {
                 <li className="navbar-menu-item" onClick={pushHowToPlayModal}><FontAwesomeIcon icon={faCircleInfo} /> {translation.get("how_to_play_nav")}</li>
 
                 {!isAdmin && 
-                  <li className="navbar-menu-item" onClick={pushExitRoomModal}><FontAwesomeIcon icon={faRightFromBracket} /> {translation.get("exit_room_nav")}</li>
+                  <li className="navbar-menu-item" onClick={pushLeaveRoomModal}><FontAwesomeIcon icon={faRightFromBracket} /> {translation.get("exit_room_nav")}</li>
                 }
             </div>
           </div>

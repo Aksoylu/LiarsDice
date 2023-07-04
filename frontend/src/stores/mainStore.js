@@ -10,6 +10,9 @@ const initialState = {
   isGameStarted: false,
   isSelfAdmin: false,
   roomPlayers: {},
+  username: localStorage.getItem("username") ?? "",
+  roomId: localStorage.getItem("room_id") ?? null,
+  authKey: localStorage.getItem("auth_key") ?? null,
 };
 
 const addRoomPlayer = (state, action) => {
@@ -20,8 +23,28 @@ const addRoomPlayer = (state, action) => {
 };
 
 const rootReducer = (state = initialState, action) => {
-  let username = "";
   switch (action.type) {
+    case "SET_AUTH_KEY":
+      localStorage.setItem("auth_key", action.payload);
+      return {
+        ...state,
+        authKey: action.payload
+      }
+
+    case "SET_USERNAME":
+      localStorage.setItem("username", action.payload);
+      return {
+        ...state,
+        username: action.payload
+      }
+
+    case "SET_ROOM_ID":
+      localStorage.setItem("room_id", action.payload);
+      return {
+        ...state,
+        roomId: action.payload
+    }
+
     case "SET_BID_AMOUNT":
       const newAmount =  (action.payload < state.minimumQuality) ? state.minimumQuality : action.payload;
       return {

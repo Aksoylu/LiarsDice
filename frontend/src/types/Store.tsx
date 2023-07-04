@@ -12,4 +12,7 @@ export interface InitialStore{
     roomPlayers:{
         [key: string]: RoomPlayer,
     },
+    username:string,
+    roomId:string,
+    authKey:string,
 }

@@ -11,7 +11,7 @@ public partial class InitialController : Hub
         if(user == null)
         {
             var userNotFoundSignal = Utility.CreateHubSignal("authentication_failed");
-            await Clients.Client(Context.ConnectionId).SendAsync(SignalTypes.PrivateSignal, userNotFoundSignal);
+            await Clients.Client(Context.ConnectionId).SendAsync(SignalTypes.CreateRoomSignal, userNotFoundSignal);
             return;
         }
         _database.updateUserSocket(user, Context.ConnectionId);
@@ -24,7 +24,7 @@ public partial class InitialController : Hub
              {
                 var userAlreadyAnotherRoomMemberSignal = Utility.CreateHubSignal("user_already_another_room_member");
                 userAlreadyAnotherRoomMemberSignal.Add("already_joined_room_name", user.RoomName);
-                await Clients.Client(Context.ConnectionId).SendAsync(SignalTypes.PrivateSignal, userAlreadyAnotherRoomMemberSignal);
+                await Clients.Client(Context.ConnectionId).SendAsync(SignalTypes.CreateRoomSignal, userAlreadyAnotherRoomMemberSignal);
                 return;
              }
         }
@@ -34,7 +34,7 @@ public partial class InitialController : Hub
         if(room != null)
         {
             var roomAlreadyExistSignal = Utility.CreateHubSignal("room_already_exist");
-            await Clients.Client(Context.ConnectionId).SendAsync(SignalTypes.PrivateSignal, roomAlreadyExistSignal);
+            await Clients.Client(Context.ConnectionId).SendAsync(SignalTypes.CreateRoomSignal, roomAlreadyExistSignal);
             return;
         }
 
@@ -46,7 +46,7 @@ public partial class InitialController : Hub
 
         /* Send success signal to user */
         var createRoomSuccessSignal = Utility.CreateHubSignal("create_room_success");
-        await Clients.Client(Context.ConnectionId).SendAsync(SignalTypes.PrivateSignal, createRoomSuccessSignal);
+        await Clients.Client(Context.ConnectionId).SendAsync(SignalTypes.CreateRoomSignal, createRoomSuccessSignal);
     }
 
     public async Task joinRoom(string jwtToken, string roomName)
@@ -56,7 +56,7 @@ public partial class InitialController : Hub
         if(user == null || user.Username == null)
         {
             var userNotFoundSignal = Utility.CreateHubSignal("authentication_failed");
-            await Clients.Client(Context.ConnectionId).SendAsync(SignalTypes.PrivateSignal, userNotFoundSignal);
+            await Clients.Client(Context.ConnectionId).SendAsync(SignalTypes.JoinRoomSignal, userNotFoundSignal);
             return;
         }
         _database.updateUserSocket(user, Context.ConnectionId);
@@ -69,7 +69,7 @@ public partial class InitialController : Hub
              {
                 var userAlreadyAnotherRoomMemberSignal = Utility.CreateHubSignal("user_already_another_room_member");
                 userAlreadyAnotherRoomMemberSignal.Add("already_joined_room_name", user.RoomName);
-                await Clients.Client(Context.ConnectionId).SendAsync(SignalTypes.PrivateSignal, userAlreadyAnotherRoomMemberSignal);
+                await Clients.Client(Context.ConnectionId).SendAsync(SignalTypes.JoinRoomSignal, userAlreadyAnotherRoomMemberSignal);
                 return;
              }
         }
@@ -79,7 +79,7 @@ public partial class InitialController : Hub
         if(currentRoom == null)
         {
             var roomNotExistSignal = Utility.CreateHubSignal("room_not_exist");
-            await Clients.Client(Context.ConnectionId).SendAsync(SignalTypes.PrivateSignal, roomNotExistSignal);
+            await Clients.Client(Context.ConnectionId).SendAsync(SignalTypes.JoinRoomSignal, roomNotExistSignal);
             return;
 
         }
@@ -88,7 +88,7 @@ public partial class InitialController : Hub
         if(currentRoom.RoomPlayers?.Count >= RuleBase.maximumPlayerPerRoom)
         {
             var maximumRoomPlayerExceededSignal = Utility.CreateHubSignal("maximum_room_players_exceeded");
-            await Clients.Client(Context.ConnectionId).SendAsync(SignalTypes.PrivateSignal, maximumRoomPlayerExceededSignal);
+            await Clients.Client(Context.ConnectionId).SendAsync(SignalTypes.JoinRoomSignal, maximumRoomPlayerExceededSignal);
             return;
         }
 
@@ -96,7 +96,7 @@ public partial class InitialController : Hub
         if(this._database.getRoomPlayerByName(currentRoom, user) != null)
         {
             var playerWithNameAlreadyExistInRoomSignal = Utility.CreateHubSignal("player_with_name_already_exist_in_room");
-            await Clients.Client(Context.ConnectionId).SendAsync(SignalTypes.PrivateSignal, playerWithNameAlreadyExistInRoomSignal);
+            await Clients.Client(Context.ConnectionId).SendAsync(SignalTypes.JoinRoomSignal, playerWithNameAlreadyExistInRoomSignal);
             return;
         }
 
@@ -109,7 +109,7 @@ public partial class InitialController : Hub
         /* Send success signal to user. This signal also contains current game room status */
         var privateSignal = Utility.CreateHubSignal("room_join_success");
         privateSignal.Add("room_users", JsonSerializer.Serialize(currentRoom.RoomPlayers));
-        await Clients.Client(Context.ConnectionId).SendAsync(SignalTypes.PrivateSignal, privateSignal);
+        await Clients.Client(Context.ConnectionId).SendAsync(SignalTypes.JoinRoomSignal, privateSignal);
 
         /* Send new user join signal to all remain users in room */
         var roomWideSignal = Utility.CreateHubSignal("user_joined");

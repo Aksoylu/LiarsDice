@@ -1,5 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { LanguageSelectorTheme } from "../constants";
+import {InitialStore} from "../types/Store";
+import { useSelector, useDispatch } from 'react-redux';
+
+import {LanguageSelectorTheme, SignalIrEvents} from "../constants";
+
 import LanguageSelector from "../components/languageSelector";
 import './welcome.css';
 import svgImage from '../assets/board.svg';
@@ -9,6 +13,8 @@ import withReactContent from 'sweetalert2-react-content'
 
 import httpService from '../services/httpService';
 import globalContext from '../global';
+
+import signalIrService from "../services/signalIrService";
 
 const swal = withReactContent(Swal);
 const { getTranslationInstance } = require("../translations/translate");
@@ -29,35 +35,6 @@ const panelSwitchToJoinRoom = () => {
   if (container)
     container.classList.remove("right-panel-active");
 }
-
-const authUser = (username: string) => {
-  // todo send request to backend and get auth key & color palette id
-  const authKey = "...";
-  localStorage.setItem("username", username);
-  localStorage.setItem("authKey", authKey);
-
-}
-
-const createRoomAction = () => {
-  const usernameElement = document.getElementById("username");
-  const roomIdElement = document.getElementById("roomId");
-
-  const username = usernameElement ? usernameElement.getAttribute("value") : null;
-  const roomId = roomIdElement ? roomIdElement.getAttribute("value") : null;
-
-  console.log("todo implement: createRoomAction", username, roomId);
-}
-
-const joinRoomAction = () => {
-  const usernameElement = document.getElementById("username");
-  const roomIdElement = document.getElementById("roomId");
-
-  const username = usernameElement ? usernameElement.getAttribute("value") : null;
-  const roomId = roomIdElement ? roomIdElement.getAttribute("value") : null;
-
-  console.log("todo implement: joinRoomAction", username, roomId);
-}
-
 
 const getLocaleRoomId = async ()=> {
 
@@ -100,18 +77,61 @@ const getLocaleRoomId = async ()=> {
 }
 
 const Welcome: React.FC<WelcomeProps> = ({ room_id, show_reconnect_modal }) => {
-  
-  const lang = globalContext.getLang();
-  const storageUsername =  globalContext.getUsername();
-
-  const translation = getTranslationInstance(lang);
+  const storageUsername = useSelector((state:InitialStore) => state.username);
+  const storageAuthKey = useSelector((state:InitialStore) => state.authKey);
 
   const [username, setUsername] = useState(storageUsername);
-  const [roomId, setRoomId] = useState(room_id);
+  const [roomId, setRoomId] = useState(room_id ?? "");
   const [isReconnectModalActive, setIsReconnectModalActive] = useState(show_reconnect_modal);
-  
+
+  const lang = globalContext.getLang();
+  const translation = getTranslationInstance(lang);
+
   if(isReconnectModalActive)
       getLocaleRoomId();
+
+  useEffect(() => {
+    if (username != storageUsername) {
+      setUsername(storageUsername);
+    }
+  }, [storageUsername]);
+  
+  const joinRoomAction = () => {
+    if(storageAuthKey == null || roomId == null)
+        return false;
+
+    signalIrService.triggerEvent(SignalIrEvents.JOIN_ROOM, [storageAuthKey, roomId]);
+  }
+
+  signalIrService.listenEvent(SignalIrEvents.JOIN_ROOM, (data:any) => {
+    console.log("join_room : " + JSON.stringify(data));
+
+    if(data.event == "room_join_success")
+    {
+      signalIrService.stopListenEvent(SignalIrEvents.JOIN_ROOM);
+    }
+  });
+
+  const createRoomAction = () => {
+    if(storageAuthKey == null || roomId == null)
+        return false;
+
+    signalIrService.triggerEvent(SignalIrEvents.CREATE_ROOM, [storageAuthKey, roomId]);
+  }
+
+  signalIrService.listenEvent(SignalIrEvents.CREATE_ROOM, (data:any) => {
+    console.log("create_room : " + JSON.stringify(data));
+
+    if(data.event == "create_room_success")
+    {
+      signalIrService.stopListenEvent(SignalIrEvents.CREATE_ROOM);
+    }
+  });
+
+  const logoutAction = async () => {
+    if(storageAuthKey == null)
+      return false;
+  }
 
   return (
     <div>
@@ -120,11 +140,6 @@ const Welcome: React.FC<WelcomeProps> = ({ room_id, show_reconnect_modal }) => {
           <form action="#">
             <h1>{translation.get("create_room_title")}</h1>
             <span>{translation.get("create_room_subtitle")}</span>
-            <input type="text"
-              placeholder={translation.get("username_text_place_holder")}
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-              id="username" />
             <input type="text"
               placeholder={translation.get("room_id_text_place_holder")}
               value={roomId}
@@ -137,11 +152,6 @@ const Welcome: React.FC<WelcomeProps> = ({ room_id, show_reconnect_modal }) => {
           <form action="#">
             <h1>{translation.get("join_room_header")}</h1>
             <span>{translation.get("join_room_subtitle")}</span>
-            <input type="text"
-              placeholder={translation.get("username_text_place_holder")}
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-              id="username" />
             <input type="text"
               placeholder={translation.get("room_id_text_place_holder")}
               value={roomId}
@@ -158,9 +168,15 @@ const Welcome: React.FC<WelcomeProps> = ({ room_id, show_reconnect_modal }) => {
               <button className="ghost" onClick={panelSwitchToJoinRoom}>{translation.get("join_room_button")}</button>
             </div>
             <div className="overlay-panel overlay-right">
-              <h2>{translation.get("welcome_title")}</h2>
-              <p>{translation.get("welcome_subtitle")}</p>
+              <h1>{translation.get("general_title")}</h1>
+              <p>
+                {translation.get("welcome_title")},
+                &nbsp;<b>{username}</b>
+                <br/>
+                {translation.get("welcome_subtitle")
+              }</p>
               <button className="ghost" onClick={panelSwitchToCreateRoom}>{translation.get("create_room_button_text")}</button>
+              <button className="ghost logout_button" onClick={logoutAction}>{translation.get("logout_button_text")}</button>
             </div>
           </div>
         </div>

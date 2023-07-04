@@ -59,3 +59,8 @@ export const LanguageSelectorTheme = {
     DARK: 0,
     LIGHT: 1,
 };
+
+export const SignalIrEvents = {
+    JOIN_ROOM: "joinRoom",
+    CREATE_ROOM: "createRoom",
+}

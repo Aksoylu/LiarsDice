@@ -1,10 +1,12 @@
 const ENGLISH = {
-    "welcome_title": "Welcome to Liar's Dice",
+    "general_title": "Liar's Dice",
+    "welcome_title": "Welcome",
     "welcome_subtitle": "Don't have a room key ? You can create your own game room from here.",
     "create_room_button_text": "Create New Room",
+    "logout_button_text": "Logout",
 
     "join_room_header": "Join Room",
-    "join_room_subtitle": "Just by using room id",
+    "join_room_subtitle": "Just by using Room Id",
     "join_room_button": "Join Room",
 
     "room_id_text_place_holder": "Room Id",

@@ -63,6 +63,6 @@ public partial class InitialController : Hub
         privateSignal.Add("username", user.Username);
 
         if(user.SocketId != null)
-            await Clients.Client(user.SocketId).SendAsync(SignalTypes.PrivateSignal, privateSignal);
+            await Clients.Client(user.SocketId).SendAsync(SignalTypes.AuthSignal, privateSignal);
     }
 }

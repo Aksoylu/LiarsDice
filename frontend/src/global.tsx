@@ -9,10 +9,10 @@ class GlobalContext{
     isAdmin = false;
 
     constructor(){
-        this.username = localStorage.getItem("username") ?? "";
-        this.authKey = localStorage.getItem("auth_key") ?? "";
+        this.username = localStorage.getItem("username") ?? ""; // todo moved to hook
+        this.authKey = localStorage.getItem("auth_key") ?? ""; // todo moved to hook
         this.language = localStorage.getItem("user_lang") ?? "en";
-        this.localeRoomId = localStorage.getItem("room_id") ?? null;
+        this.localeRoomId = localStorage.getItem("room_id") ?? null;    // todo moved to hook
     }
 
     getLocaleRoomId(){
@@ -48,6 +48,11 @@ class GlobalContext{
 
     getUsername(){
         return this.username;
+    }
+
+    setUsername(username:string){
+        this.username = username;
+        localStorage.setItem("username", username);
     }
 
     isAuth(){
