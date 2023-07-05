@@ -14,13 +14,13 @@ import { useSelector, useDispatch } from 'react-redux';
 import signalIrService from "./services/signalIrService";
 
 const startSignalRConnection = async (authKey:string) => {
-  await signalIrService.start();
-  await signalIrService.socketAuth(authKey);
+  await signalIrService.start(authKey);
 }
 
 const App: React.FC = () => {
-
   const authKey = useSelector((state:InitialStore) => state.authKey);
+  const roomId = useSelector((state:InitialStore) => state.roomId);
+
   const [isScreenSizeCompatible, setIsScreenSizeCompatible] = useState(false);
   
   signalIrService.build(useDispatch());
@@ -44,13 +44,13 @@ const App: React.FC = () => {
   }
 
   const isAuth = globalContext.isAuth();
-  const localeRoomId = globalContext.getLocaleRoomId() || null;
+  
 
   return (
     <Router>
       <Routes>
-        {!localeRoomId &&  <Route path="/" element={<Welcome />} />}
-        {localeRoomId &&  <Route path="/" element={<Welcome show_reconnect_modal={true}/>} />}
+        {!roomId &&  <Route path="/" element={<Welcome />} />}
+        {roomId &&  <Route path="/" element={<Welcome show_reconnect_modal={true}/>} />}
 
         {!isAuth && <Route path="join_room/:room_id" element={<WelcomeWithRoomId />} />}
         {isAuth && <Route path="join_room/:room_id" element={<GameboardwithRoomId />} />}

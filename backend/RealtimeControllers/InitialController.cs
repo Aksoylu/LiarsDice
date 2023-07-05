@@ -52,15 +52,24 @@ public partial class InitialController : Hub
         Authentication? user = _database.tokenAuth(jwtToken);
         if(user == null || user.Username == null)
         {
+            // create new user...
             var userNotFoundSignal = Utility.CreateHubSignal("authentication_failed");
             await Clients.Client(Context.ConnectionId).SendAsync(SignalTypes.AuthSignal, userNotFoundSignal);
             return;
         }
+
+        /* Means user is already exist. Update socket first */
         _database.updateUserSocket(user, Context.ConnectionId);
 
         /* Send success signal to client */
         var privateSignal = Utility.CreateHubSignal("socket_auth_success");
         privateSignal.Add("username", user.Username);
+
+        /* Get users room if user has joined still active room */
+        GameRoom? currentRoom = _database.getRoomByName(user.RoomName);
+        RoomPlayer? player = _database.getRoomPlayerByName(currentRoom, user);
+        if(player != null)
+            privateSignal.Add("room_id", user.RoomName);
 
         if(user.SocketId != null)
             await Clients.Client(user.SocketId).SendAsync(SignalTypes.AuthSignal, privateSignal);
@@ -71,17 +80,25 @@ public partial class InitialController : Hub
         Authentication? user = _database.tokenAuth(jwtToken);
         if(user == null || user.Username == null)
         {
-            var userNotFoundSignal = Utility.CreateHubSignal("authentication_failed");
+            var userNotFoundSignal = Utility.CreateHubSignal("already_not_authenticated");
             await Clients.Client(Context.ConnectionId).SendAsync(SignalTypes.LogoutSignal, userNotFoundSignal);
             return;
         }
-        _database.updateUserSocket(user, Context.ConnectionId);
+
+        GameRoom? currentRoom = _database.getRoomByName(user.RoomName);
+        RoomPlayer? player = _database.getRoomPlayerByName(currentRoom, user);
+        if(player != null)
+        {
+            var roomMemberCannotLogoutSignal = Utility.CreateHubSignal("room_member_cannot_logout");
+            await Clients.Client(Context.ConnectionId).SendAsync(SignalTypes.LogoutSignal, roomMemberCannotLogoutSignal);
+            return;
+        }
+        
+        _database.destroyUser(user);
 
         /* Send success signal to client */
-        var privateSignal = Utility.CreateHubSignal("socket_auth_success");
-        privateSignal.Add("username", user.Username);
-
+        var privateSignal = Utility.CreateHubSignal("socket_logout_success");
         if(user.SocketId != null)
-            await Clients.Client(user.SocketId).SendAsync(SignalTypes.LogoutSignal, privateSignal);
+            await Clients.Client(Context.ConnectionId).SendAsync(SignalTypes.LogoutSignal, privateSignal);
     }
 }

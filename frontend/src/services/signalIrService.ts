@@ -7,6 +7,7 @@ class SignalIrService {
 
     connection:any = null;
     socketAuthListener:any = null;
+    socketLogoutListener:any = null;
     dispatch:any = null;
 
     constructor(){
@@ -17,14 +18,23 @@ class SignalIrService {
         }).build();
         
         this.socketAuthListener = this._socketAuthListener();
+        this.socketLogoutListener = this._socketLogoutListener();
     }
 
     build(dispatch:any){
         this.dispatch = dispatch;
     }
 
-    async start(){
-        await this.connection.start();
+    async start(authKey:string){
+        try{
+            await this.connection.start();
+            await this.socketAuth(authKey);
+        }
+        catch(exception)
+        {
+            console.log(exception);
+        }
+     
     }
 
     async stop(){
@@ -56,7 +66,6 @@ class SignalIrService {
     }
 
     socketLogout(authKey:string){
-
         if(!authKey)
             return false;
 
@@ -67,27 +76,45 @@ class SignalIrService {
         if(authKey == null || roomId == null)
             return false;
 
-        this.connection.invoke("joinRoom", authKey, roomId);
+        this.connection.invoke("socketLogout", authKey, roomId);
     }
-
-
-    /* =================================  */
 
     _socketAuthListener(){
         const handleSocketAuth = (data:any) => {
             if(data != null && data?.event == "socket_auth_success" && data?.username != null)
             {
-                this.dispatch({ type: 'SET_USERNAME', payload:data.username});
+                this.connection.off("socketAuth", handleSocketAuth);
 
+                this.dispatch({ type: 'SET_USERNAME', payload:data.username});
                 if(data?.room_id)
                     this.dispatch({ type: 'SET_ROOM_ID', payload:data.room_id});
-
-                console.log("SOCKET AUTHENTICAION: "+ JSON.stringify(data));
-                this.connection.off("socketAuth", handleSocketAuth);
+                return;
+            }
+            else
+            {
+                this.dispatch({ type: 'LOGOUT', payload:null}); 
             }
         }
-        this.connection.on("auth_signal", handleSocketAuth);      
+
+        this.connection.on("socketAuth", handleSocketAuth);      
     }
+
+    _socketLogoutListener(){
+        const handleSocketLogout = (data:any) => {
+            if(data.event == "socket_logout_success" || data.event == "already_not_authenticated")
+            {                
+                this.connection.off("socketLogout", handleSocketLogout);
+
+                this.dispatch({ type: 'LOGOUT', payload:null});
+
+                return;
+            }
+        }
+
+        this.connection.on("socketLogout", handleSocketLogout);   
+    }
+
+
 }
 
 const signalIrService = new SignalIrService();

@@ -23,6 +23,7 @@ interface WelcomeProps {
   show_reconnect_modal?: boolean;
 }
 
+// reconnect mechanism fix
 const getLocaleRoomId = async ()=> {
 
   const lang = globalContext.getLang();
@@ -67,6 +68,7 @@ const WARN_MESSAGE_TYPES = {
   "ERROR": "errorText",
   "INFO": "infoText",
   "WARNING": "warnText",
+  "SUCCESS": "successText",
 };
 
 const Welcome: React.FC<WelcomeProps> = ({ room_id, show_reconnect_modal }) => {
@@ -124,14 +126,12 @@ const Welcome: React.FC<WelcomeProps> = ({ room_id, show_reconnect_modal }) => {
       signalIrService.stopListenEvent(SignalIrEvents.JOIN_ROOM);
       dispatch({ type: 'SET_ROOM_ID', payload:roomId});
       window.location.href = "/join_room/" + roomId;
-      return;
     }
     else if(data.event == "user_already_room_member")
     {
       signalIrService.stopListenEvent(SignalIrEvents.JOIN_ROOM);
       dispatch({ type: 'SET_ROOM_ID', payload:roomId});
       window.location.href = "/join_room/" + roomId;
-      return;
     }
     else
     {
@@ -155,7 +155,6 @@ const Welcome: React.FC<WelcomeProps> = ({ room_id, show_reconnect_modal }) => {
       signalIrService.stopListenEvent(SignalIrEvents.CREATE_ROOM);
       dispatch({ type: 'SET_ROOM_ID', payload:roomId});
       window.location.href = "/join_room/" + roomId;
-      return;
     }
     else
     {
@@ -164,7 +163,7 @@ const Welcome: React.FC<WelcomeProps> = ({ room_id, show_reconnect_modal }) => {
     }
   });
 
-  /* ===== todo: LOGOUT ===== */
+  /* ===== LOGOUT ===== */
 
   const logoutAction = async () => {
     if(storageAuthKey == null)
@@ -174,11 +173,10 @@ const Welcome: React.FC<WelcomeProps> = ({ room_id, show_reconnect_modal }) => {
   }
 
   signalIrService.listenEvent(SignalIrEvents.LOGOUT, (data:any) => {
-    if(data.event == "create_room_success")
+    if(data.event == "socket_logout_success" || data.event == "already_not_authenticated")
     {
-      signalIrService.stopListenEvent(SignalIrEvents.LOGOUT);
-      dispatch({ type: 'SET_ROOM_ID', payload:roomId});
-      window.location.href = "/join_room/" + roomId;
+      setWarnMessageType(WARN_MESSAGE_TYPES.SUCCESS);
+      setWarnMessage(translation.get("logout_success_text"));
       return;
     }
     else
@@ -187,8 +185,6 @@ const Welcome: React.FC<WelcomeProps> = ({ room_id, show_reconnect_modal }) => {
       setWarnMessage(translation.get("error_" + data.event));
     }
   });
-
-  /* ===== todo: SOCKET AUTH ===== */
 
   return (
     <div>

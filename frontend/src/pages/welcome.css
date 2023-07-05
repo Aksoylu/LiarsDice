@@ -267,11 +267,6 @@ footer a {
     left: 50%;
 }
 
-.username_input{
-	background-color: #535353;
-	color: #42cb74;
-}
-
 .errorText{
 	color: #eb3e3e;
 }
@@ -282,4 +277,8 @@ footer a {
 
 .warnText{
 	color: #b5820a;
+}
+
+.successText{
+	color: #42cb74;
 }

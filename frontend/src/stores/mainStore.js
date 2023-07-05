@@ -24,6 +24,14 @@ const addRoomPlayer = (state, action) => {
 
 const rootReducer = (state = initialState, action) => {
   switch (action.type) {
+    case "LOGOUT":
+      localStorage.removeItem("username");
+      localStorage.removeItem("room_id");
+      localStorage.removeItem("auth_key");
+
+      return {
+       ...initialState
+      }
     case "SET_AUTH_KEY":
       localStorage.setItem("auth_key", action.payload);
       return {

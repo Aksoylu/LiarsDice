@@ -161,8 +161,11 @@ public class DatabaseHelper{
         this._databaseContext.SaveChanges();
     }
 
-    public GameRoom? getRoomByName(String roomName)
+    public GameRoom? getRoomByName(String? roomName)
     {
+        if(roomName == null)
+            return null;
+
         return this._databaseContext.GameRooms?.FirstOrDefault(room => room.Name == roomName);
     }
 
@@ -200,8 +203,11 @@ public class DatabaseHelper{
         return room.RoomPlayers.ElementAt(randomPlayerIndex);
     }
 
-    public RoomPlayer? getRoomPlayerByName(GameRoom room, Authentication user)
+    public RoomPlayer? getRoomPlayerByName(GameRoom? room, Authentication? user)
     {
+        if(room == null || user == null)
+            return null;
+
         return room.RoomPlayers.FirstOrDefault(player => player.Username == user.Username);
     }
 
@@ -231,5 +237,11 @@ public class DatabaseHelper{
     {
         user.SocketId = newSocketId;
         this._databaseContext.SaveChangesAsync();
+    }
+
+    public void destroyUser(Authentication user)
+    {
+        this._databaseContext.AuthenticationTable?.Remove(user);
+        this._databaseContext.SaveChanges();
     }
 }

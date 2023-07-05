@@ -4,6 +4,7 @@ const ENGLISH = {
     "welcome_subtitle": "Don't have a room key ? You can create your own game room from here.",
     "create_room_button_text": "Create New Room",
     "logout_button_text": "Logout",
+    "logout_success_text": "You have successfully logged out",
 
     "join_room_header": "Join Room",
     "join_room_subtitle": "Just by using Room Id",
@@ -25,6 +26,8 @@ const ENGLISH = {
     "error_user_already_another_room_member": "You are already member of another room",
     "error_room_already_exist": "This room is already exist",
 
+    "error_already_not_authenticated": "You are already not logged in",
+    "error_room_member_cannot_logout": "You are a member of game room. You can not logout and login as new user until leaving your current room. Please leave your room first",
 
     "do_you_want_to_join_room": "Do you want to join existing room ?",
     "is_someone_waiting_you": "Is there anybody waiting for you ? Do not make them angry. Join existing play room by here.",
