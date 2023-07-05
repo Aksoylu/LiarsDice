@@ -55,6 +55,14 @@ class SignalIrService {
         this.connection.invoke("socketAuth", authKey);
     }
 
+    socketLogout(authKey:string){
+
+        if(!authKey)
+            return false;
+
+        this.connection.invoke("socketLogout", authKey);
+    }
+
     joinRoom(authKey?:string, roomId?:string){
         if(authKey == null || roomId == null)
             return false;

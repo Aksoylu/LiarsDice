@@ -23,19 +23,6 @@ interface WelcomeProps {
   show_reconnect_modal?: boolean;
 }
 
-const panelSwitchToCreateRoom = () => {
-  const container = document.getElementById('container');
-  if (container)
-    container.classList.add("right-panel-active");
-}
-
-const panelSwitchToJoinRoom = () => {
-  console.log("panelSwitchToJoinRoom");
-  const container = document.getElementById('container');
-  if (container)
-    container.classList.remove("right-panel-active");
-}
-
 const getLocaleRoomId = async ()=> {
 
   const lang = globalContext.getLang();
@@ -76,12 +63,23 @@ const getLocaleRoomId = async ()=> {
   })
 }
 
+const WARN_MESSAGE_TYPES = {
+  "ERROR": "errorText",
+  "INFO": "infoText",
+  "WARNING": "warnText",
+};
+
 const Welcome: React.FC<WelcomeProps> = ({ room_id, show_reconnect_modal }) => {
+  const dispatch = useDispatch();
+
   const storageUsername = useSelector((state:InitialStore) => state.username);
   const storageAuthKey = useSelector((state:InitialStore) => state.authKey);
 
   const [username, setUsername] = useState(storageUsername);
   const [roomId, setRoomId] = useState(room_id ?? "");
+  const [warnMessageType, setWarnMessageType] = useState(WARN_MESSAGE_TYPES.ERROR);
+  const [warnMessage, setWarnMessage] = useState("");
+
   const [isReconnectModalActive, setIsReconnectModalActive] = useState(show_reconnect_modal);
 
   const lang = globalContext.getLang();
@@ -95,22 +93,54 @@ const Welcome: React.FC<WelcomeProps> = ({ room_id, show_reconnect_modal }) => {
       setUsername(storageUsername);
     }
   }, [storageUsername]);
-  
+
+  const panelSwitchToCreateRoom = () => {
+    const container = document.getElementById('container');
+    if (container)
+      container.classList.add("right-panel-active");
+      setWarnMessage("");
+  }
+
+  const panelSwitchToJoinRoom = () => {
+    console.log("panelSwitchToJoinRoom");
+    const container = document.getElementById('container');
+    if (container)
+      container.classList.remove("right-panel-active");
+      setWarnMessage("");
+  }
+
+  /* ===== JOIN ROOM ===== */
   const joinRoomAction = () => {
     if(storageAuthKey == null || roomId == null)
         return false;
 
+        console.log(roomId);
     signalIrService.triggerEvent(SignalIrEvents.JOIN_ROOM, [storageAuthKey, roomId]);
   }
 
   signalIrService.listenEvent(SignalIrEvents.JOIN_ROOM, (data:any) => {
-    console.log("join_room : " + JSON.stringify(data));
-
     if(data.event == "room_join_success")
     {
       signalIrService.stopListenEvent(SignalIrEvents.JOIN_ROOM);
+      dispatch({ type: 'SET_ROOM_ID', payload:roomId});
+      window.location.href = "/join_room/" + roomId;
+      return;
+    }
+    else if(data.event == "user_already_room_member")
+    {
+      signalIrService.stopListenEvent(SignalIrEvents.JOIN_ROOM);
+      dispatch({ type: 'SET_ROOM_ID', payload:roomId});
+      window.location.href = "/join_room/" + roomId;
+      return;
+    }
+    else
+    {
+      setWarnMessageType(WARN_MESSAGE_TYPES.ERROR);
+      setWarnMessage(translation.get("error_" + data.event));
     }
   });
+
+  /* ===== CREATE ROOM ===== */
 
   const createRoomAction = () => {
     if(storageAuthKey == null || roomId == null)
@@ -120,18 +150,45 @@ const Welcome: React.FC<WelcomeProps> = ({ room_id, show_reconnect_modal }) => {
   }
 
   signalIrService.listenEvent(SignalIrEvents.CREATE_ROOM, (data:any) => {
-    console.log("create_room : " + JSON.stringify(data));
-
     if(data.event == "create_room_success")
     {
       signalIrService.stopListenEvent(SignalIrEvents.CREATE_ROOM);
+      dispatch({ type: 'SET_ROOM_ID', payload:roomId});
+      window.location.href = "/join_room/" + roomId;
+      return;
+    }
+    else
+    {
+      setWarnMessageType(WARN_MESSAGE_TYPES.ERROR);
+      setWarnMessage(translation.get("error_" + data.event));
     }
   });
+
+  /* ===== todo: LOGOUT ===== */
 
   const logoutAction = async () => {
     if(storageAuthKey == null)
       return false;
+
+    signalIrService.socketLogout(storageAuthKey);
   }
+
+  signalIrService.listenEvent(SignalIrEvents.LOGOUT, (data:any) => {
+    if(data.event == "create_room_success")
+    {
+      signalIrService.stopListenEvent(SignalIrEvents.LOGOUT);
+      dispatch({ type: 'SET_ROOM_ID', payload:roomId});
+      window.location.href = "/join_room/" + roomId;
+      return;
+    }
+    else
+    {
+      setWarnMessageType(WARN_MESSAGE_TYPES.ERROR);
+      setWarnMessage(translation.get("error_" + data.event));
+    }
+  });
+
+  /* ===== todo: SOCKET AUTH ===== */
 
   return (
     <div>
@@ -146,6 +203,7 @@ const Welcome: React.FC<WelcomeProps> = ({ room_id, show_reconnect_modal }) => {
               onChange={(e) => setRoomId(e.target.value)}
               id="roomId" />
             <button onClick={createRoomAction}>{translation.get("create_room_button")}</button>
+            <p className={warnMessageType}>{warnMessage}</p>
           </form>
         </div>
         <div className="form-container primary-container">
@@ -158,6 +216,7 @@ const Welcome: React.FC<WelcomeProps> = ({ room_id, show_reconnect_modal }) => {
               onChange={(e) => setRoomId(e.target.value)}
               id="roomId" />
             <button onClick={joinRoomAction}>{translation.get("join_room_button")}</button>
+            <p className={warnMessageType}>{warnMessage}</p>
           </form>
         </div>
         <div className="overlay-container">

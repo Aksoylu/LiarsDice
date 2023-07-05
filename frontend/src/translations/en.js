@@ -9,12 +9,21 @@ const ENGLISH = {
     "join_room_subtitle": "Just by using Room Id",
     "join_room_button": "Join Room",
 
+    "error_already_joined_room_name": "You are already member of this room. If you want to reconnect, please click :",
+    "error_room_not_exist": "Room not exist",
+    "error_maximum_room_players_exceeded": "Maximum player exceeded in room. You are not able to join until someone leaves.",
+    "error_already_another_room_member": "You are already member of this room.\nPlease click to reconnect:\n",
+    
     "room_id_text_place_holder": "Room Id",
     "username_text_place_holder": "Username",
 
     "create_room_title": "Create New Room",
     "create_room_subtitle": "Create your own liar's Dice room and share it via link and room id!",
     "create_room_button": "Create Room",
+
+    "error_authentication_failed" : "Authentication Failed. Please sign-in again.",
+    "error_user_already_another_room_member": "You are already member of another room",
+    "error_room_already_exist": "This room is already exist",
 
 
     "do_you_want_to_join_room": "Do you want to join existing room ?",

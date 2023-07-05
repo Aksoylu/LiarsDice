@@ -65,11 +65,20 @@ public partial class InitialController : Hub
         if (user.RoomName != null)
         {
              GameRoom? alreadyJoinedRoom = this._database.getRoomByName(user.RoomName);
-             if(alreadyJoinedRoom != null)
+             if(alreadyJoinedRoom != null )
              {
-                var userAlreadyAnotherRoomMemberSignal = Utility.CreateHubSignal("user_already_another_room_member");
-                userAlreadyAnotherRoomMemberSignal.Add("already_joined_room_name", user.RoomName);
-                await Clients.Client(Context.ConnectionId).SendAsync(SignalTypes.JoinRoomSignal, userAlreadyAnotherRoomMemberSignal);
+                if(alreadyJoinedRoom.Name == roomName)
+                {
+                    var userAlreadyRoomMemberSignal = Utility.CreateHubSignal("user_already_room_member");
+                    await Clients.Client(Context.ConnectionId).SendAsync(SignalTypes.JoinRoomSignal, userAlreadyRoomMemberSignal);
+                }
+                else
+                {
+                    var userAlreadyAnotherRoomMemberSignal = Utility.CreateHubSignal("user_already_another_room_member");
+                    userAlreadyAnotherRoomMemberSignal.Add("already_joined_room_name", user.RoomName);
+                    await Clients.Client(Context.ConnectionId).SendAsync(SignalTypes.JoinRoomSignal, userAlreadyAnotherRoomMemberSignal);
+                }
+
                 return;
              }
         }
@@ -89,14 +98,6 @@ public partial class InitialController : Hub
         {
             var maximumRoomPlayerExceededSignal = Utility.CreateHubSignal("maximum_room_players_exceeded");
             await Clients.Client(Context.ConnectionId).SendAsync(SignalTypes.JoinRoomSignal, maximumRoomPlayerExceededSignal);
-            return;
-        }
-
-        /* Check there is no user with same name in room */
-        if(this._database.getRoomPlayerByName(currentRoom, user) != null)
-        {
-            var playerWithNameAlreadyExistInRoomSignal = Utility.CreateHubSignal("player_with_name_already_exist_in_room");
-            await Clients.Client(Context.ConnectionId).SendAsync(SignalTypes.JoinRoomSignal, playerWithNameAlreadyExistInRoomSignal);
             return;
         }
 

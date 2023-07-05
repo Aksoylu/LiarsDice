@@ -271,3 +271,15 @@ footer a {
 	background-color: #535353;
 	color: #42cb74;
 }
+
+.errorText{
+	color: #eb3e3e;
+}
+
+.infoText{
+	color: #1583ab;
+}
+
+.warnText{
+	color: #b5820a;
+}

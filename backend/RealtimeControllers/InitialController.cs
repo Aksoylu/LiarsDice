@@ -53,7 +53,7 @@ public partial class InitialController : Hub
         if(user == null || user.Username == null)
         {
             var userNotFoundSignal = Utility.CreateHubSignal("authentication_failed");
-            await Clients.Client(Context.ConnectionId).SendAsync(SignalTypes.PrivateSignal, userNotFoundSignal);
+            await Clients.Client(Context.ConnectionId).SendAsync(SignalTypes.AuthSignal, userNotFoundSignal);
             return;
         }
         _database.updateUserSocket(user, Context.ConnectionId);
@@ -64,5 +64,24 @@ public partial class InitialController : Hub
 
         if(user.SocketId != null)
             await Clients.Client(user.SocketId).SendAsync(SignalTypes.AuthSignal, privateSignal);
+    }
+
+    public async Task socketLogout(string jwtToken)
+    {
+        Authentication? user = _database.tokenAuth(jwtToken);
+        if(user == null || user.Username == null)
+        {
+            var userNotFoundSignal = Utility.CreateHubSignal("authentication_failed");
+            await Clients.Client(Context.ConnectionId).SendAsync(SignalTypes.LogoutSignal, userNotFoundSignal);
+            return;
+        }
+        _database.updateUserSocket(user, Context.ConnectionId);
+
+        /* Send success signal to client */
+        var privateSignal = Utility.CreateHubSignal("socket_auth_success");
+        privateSignal.Add("username", user.Username);
+
+        if(user.SocketId != null)
+            await Clients.Client(user.SocketId).SendAsync(SignalTypes.LogoutSignal, privateSignal);
     }
 }
