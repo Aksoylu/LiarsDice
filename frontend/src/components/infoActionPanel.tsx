@@ -2,7 +2,10 @@ import React from 'react';
 import './infoActionPanel.css';
 import 'animate.css';
 
-import globalContext from "../global";
+import {InitialStore} from "../types/Store";
+import { useSelector } from 'react-redux';
+
+
 const {InfoActionPanelStates} = require("../constants");
 const {getTranslationInstance} = require("../translations/translate");
 
@@ -36,7 +39,9 @@ const ribbonClasses = {
 }
 
 const InfoActionPanel: React.FC<InfoActionPanelProps> = ({state}) => {
-  const translation = getTranslationInstance(globalContext.getLang());
+  const storageLanguage = useSelector((state:InitialStore) => state.language)
+  const translation= getTranslationInstance(storageLanguage);
+
   const className = ribbonClasses[state] + " animate__animated animate__slideInUp";
   
   return (

@@ -3,12 +3,12 @@ import './inputSpinner.css';
 
 import { useSelector, useDispatch } from 'react-redux';
 import {InitialStore} from "../types/Store";
-import globalContext from "../global";
 
 const {getTranslationInstance} = require("../translations/translate");
 
 const InputSpinner: React.FC = () => {
-  const translation = getTranslationInstance(globalContext.getLang());
+  const storageLanguage = useSelector((state:InitialStore) => state.language)
+  const translation= getTranslationInstance(storageLanguage);
 
   const bidAmount:number = useSelector((state:InitialStore) => state.quality);
 

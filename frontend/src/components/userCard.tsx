@@ -14,10 +14,10 @@ import Dice4 from '../assets/dice_4.svg';
 import Dice5 from '../assets/dice_5.svg';
 import Dice6 from '../assets/dice_6.svg';
 
-import globalContext from "../global";
+import {InitialStore} from "../types/Store";
+import { useSelector, useDispatch } from 'react-redux';
 
 const { getTranslationInstance } = require("../translations/translate");
-
 const diceSkins = [Dice1, Dice2, Dice3, Dice4, Dice5, Dice6];
 
 interface UserCardProps {
@@ -30,7 +30,8 @@ interface UserCardProps {
 }
 
 const UserCard: React.FC<UserCardProps> = ({ username, colorPalette, isTurn, isEliminated, isDisconnected, currentBid }) => {
-  const translation = getTranslationInstance(globalContext.getLang());
+  const storageLanguage = useSelector((state:InitialStore) => state.language)
+  const translation= getTranslationInstance(storageLanguage);
 
   const firstLetter = username[0].toUpperCase();
 

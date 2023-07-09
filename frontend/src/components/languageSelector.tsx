@@ -5,8 +5,11 @@ import deFlag from "../assets/country_flags/de.svg";
 import trFlag from "../assets/country_flags/tr.svg";
 import enFlag from "../assets/country_flags/us.svg";
 
+import {InitialStore} from "../types/Store";
+import { useSelector, useDispatch } from 'react-redux';
+
 import {Languages, LanguageSelectorTheme} from "../constants";
-import globalContext from "../global";
+
 interface LanguageSelectorProps{
   languageSelectorTheme:number|undefined;
 }
@@ -23,22 +26,26 @@ const languageNames = {
   [Languages.DE]: "Deutsch",
 }
 
-const updateSelectedLanguage = (languageCode:string) => {
-  globalContext.setLang(languageCode);
-}
+
 
 const LanguageSelector: React.FC<LanguageSelectorProps> = ({languageSelectorTheme}) => {
-  
-  const dropdownThemeClass = languageSelectorTheme == LanguageSelectorTheme.DARK ? "dropdown-select-dark": "dropdown-select-light";
-  const optionThemeClass = languageSelectorTheme == LanguageSelectorTheme.DARK ? "language-option-dark" : "language-option-light";
+  const dispatch = useDispatch();
 
-  const localeSelectedLanguage = globalContext.getLang();
-  const [selectedLanguage, setSelectedLanguage] = useState(localeSelectedLanguage);
-  const languageArray = Object.values(Languages);
+  const storageLanguage = useSelector((state:InitialStore) => state.language)
+  const [selectedLanguage, setSelectedLanguage] = useState(storageLanguage);
+
+  const updateSelectedLanguage = (languageCode:string) => {
+    dispatch({ type: 'SET_LANGUAGE', payload:languageCode});
+  }
 
   useEffect(()=> {
     updateSelectedLanguage(selectedLanguage);
   });
+
+  const dropdownThemeClass = languageSelectorTheme == LanguageSelectorTheme.DARK ? "dropdown-select-dark": "dropdown-select-light";
+  const optionThemeClass = languageSelectorTheme == LanguageSelectorTheme.DARK ? "language-option-dark" : "language-option-light";
+
+  const languageArray = Object.values(Languages);
 
   const createLanguageInputs = (languageCode:string, key:number, isActive:boolean) => {
     const itemId = "language_option_" + languageCode;

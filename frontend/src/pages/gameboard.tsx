@@ -1,5 +1,6 @@
 import React, {ReactNode, useEffect, useState} from 'react';
 import svgImage from '../assets/board.svg';
+import "./gameboard.css";
 
 import ChatBox from '../components/chatBox';
 import Navbar from '../components/navBar';
@@ -14,10 +15,8 @@ import {RoomPlayer} from "../types/RoomPlayer";
 
 import {InitialStore} from "../types/Store";
 
-import "./gameboard.css";
 import {colorPaletteList, GameSignals, InfoActionPanelStates} from "../constants";
 
-import globalContext from '../global';
 import { useSelector, useDispatch } from 'react-redux';
 
 interface GameboardProps {
@@ -115,9 +114,8 @@ const renderActionPanel = (username:string, isGameStarted:boolean, isUserElimina
   }
 }
 
-const GameBoard: React.FC<GameboardProps> = ({ room_id }) => {
-  const username = globalContext.getUsername();
-
+const GameBoard: React.FC<GameboardProps> = ({ room_id }) => {  
+  const username = useSelector((state:InitialStore) => state.username)
   const isTurn = useSelector((state:InitialStore) => state.isTurn);
   const isUserEliminated = useSelector((state:InitialStore) => state.isUserEliminated);
   const isGameStarted = useSelector((state:InitialStore) => state.isGameStarted);

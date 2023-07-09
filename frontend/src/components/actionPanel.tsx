@@ -17,7 +17,6 @@ const in_animation = "animate__slideInUp";
 const out_animation = "animate__slideOutDown";
 
 const ActionPanel: React.FC<ActionPanelProps> = ({isActionPanelVisible}) => {
-
   const storageLanguage = useSelector((state:InitialStore) => state.language)
   const translation= getTranslationInstance(storageLanguage);
 
