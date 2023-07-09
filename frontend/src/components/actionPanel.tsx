@@ -4,10 +4,8 @@ import DicePicker from './dicePicker';
 import './actionPanel.css';
 import 'animate.css';
 
-import globalContext from "../global";
-
-import { useSelector, useDispatch } from 'react-redux';
 import {InitialStore} from "../types/Store";
+import { useSelector, useDispatch } from 'react-redux';
 
 const {getTranslationInstance} = require("../translations/translate");
 
@@ -19,7 +17,9 @@ const in_animation = "animate__slideInUp";
 const out_animation = "animate__slideOutDown";
 
 const ActionPanel: React.FC<ActionPanelProps> = ({isActionPanelVisible}) => {
-  const translation = getTranslationInstance(globalContext.getLang());
+
+  const storageLanguage = useSelector((state:InitialStore) => state.language)
+  const translation= getTranslationInstance(storageLanguage);
 
   const animationClass = isActionPanelVisible ? in_animation : out_animation;
   const className = "yourTurnRibbon animate__animated " + animationClass;

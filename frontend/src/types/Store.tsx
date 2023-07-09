@@ -15,4 +15,5 @@ export interface InitialStore{
     username:string,
     roomId:string,
     authKey:string,
+    language:string,
 }

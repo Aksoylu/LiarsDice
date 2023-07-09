@@ -39,7 +39,6 @@ const ENGLISH = {
     "title_bet_amount": "Amount",
     "title_bet_dice": "Dice",
 
-
     "button_declare_bet": "Declare Your Bet",
     "button_call_bluff": "Call Bluff",
 
@@ -141,6 +140,12 @@ const ENGLISH = {
     "modal_reconnect_content": "Looks like you are already joined a room, do you want to reconnect back ?",
     "modal_reconnect_accept_button": "Yes, reconnect",
     "modal_reconnect_decline_button": "No",
+
+    "modal_create_session_title": "Liar's Dice",
+    "modal_create_session_subtitle": "Create your account. No email or another additional information needed !",
+    "modal_create_session_accept_button": "Create Account",
+
+
 }
 
 module.exports = ENGLISH

@@ -13,6 +13,7 @@ const initialState = {
   username: localStorage.getItem("username") ?? "",
   roomId: localStorage.getItem("room_id") ?? null,
   authKey: localStorage.getItem("auth_key") ?? null,
+  language: localStorage.getItem("user_lang") ?? "en",
 };
 
 const addRoomPlayer = (state, action) => {
@@ -32,6 +33,14 @@ const rootReducer = (state = initialState, action) => {
       return {
        ...initialState
       }
+    
+    case "SET_LANGUAGE":
+      localStorage.setItem("user_lang", action.payload);
+      return {
+        ...initialState,
+        language: action.payload
+      }
+
     case "SET_AUTH_KEY":
       localStorage.setItem("auth_key", action.payload);
       return {

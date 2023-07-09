@@ -1,4 +1,3 @@
-import globalContext from "../global";
 import {SignalIrEvents} from "../constants";
 const signalR = require('@microsoft/signalr');
 
@@ -7,7 +6,6 @@ class SignalIrService {
 
     connection:any = null;
     socketAuthListener:any = null;
-    socketLogoutListener:any = null;
     dispatch:any = null;
 
     constructor(){
@@ -18,7 +16,6 @@ class SignalIrService {
         }).build();
         
         this.socketAuthListener = this._socketAuthListener();
-        this.socketLogoutListener = this._socketLogoutListener();
     }
 
     build(dispatch:any){
@@ -65,13 +62,6 @@ class SignalIrService {
         this.connection.invoke("socketAuth", authKey);
     }
 
-    socketLogout(authKey:string){
-        if(!authKey)
-            return false;
-
-        this.connection.invoke("socketLogout", authKey);
-    }
-
     joinRoom(authKey?:string, roomId?:string){
         if(authKey == null || roomId == null)
             return false;
@@ -98,25 +88,7 @@ class SignalIrService {
 
         this.connection.on("socketAuth", handleSocketAuth);      
     }
-
-    _socketLogoutListener(){
-        const handleSocketLogout = (data:any) => {
-            if(data.event == "socket_logout_success" || data.event == "already_not_authenticated")
-            {                
-                this.connection.off("socketLogout", handleSocketLogout);
-
-                this.dispatch({ type: 'LOGOUT', payload:null});
-
-                return;
-            }
-        }
-
-        this.connection.on("socketLogout", handleSocketLogout);   
-    }
-
-
 }
 
 const signalIrService = new SignalIrService();
-
 export default signalIrService;

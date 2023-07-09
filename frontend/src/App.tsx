@@ -2,7 +2,6 @@ import React, {useEffect, useState} from 'react';
 import './App.css';
 import { BrowserRouter as Router, Route, Routes, useParams } from 'react-router-dom';
 import {AllowedPageSize, ErrorPageTypes} from './constants';
-import globalContext from './global';
 
 import Welcome from './pages/welcome';
 import GameBoard from './pages/gameboard';
@@ -18,13 +17,17 @@ const startSignalRConnection = async (authKey:string) => {
 }
 
 const App: React.FC = () => {
-  const authKey = useSelector((state:InitialStore) => state.authKey);
+  const storageAuthKey = useSelector((state:InitialStore) => state.authKey);
+  const storageUsername = useSelector((state:InitialStore) => state.username);
+  const [isAuthenticationValid, setIsAuthenticationValid] = useState(storageUsername != null && storageAuthKey != null);
+
+
   const roomId = useSelector((state:InitialStore) => state.roomId);
 
   const [isScreenSizeCompatible, setIsScreenSizeCompatible] = useState(false);
   
   signalIrService.build(useDispatch());
-  startSignalRConnection(authKey);
+  startSignalRConnection(storageAuthKey);
 
   const checkPageSize = () => {
     setIsScreenSizeCompatible((window.innerWidth < AllowedPageSize.minimumWidth || window.innerHeight < AllowedPageSize.minimumHeight))
@@ -39,11 +42,7 @@ const App: React.FC = () => {
   }, []);
 
   if(isScreenSizeCompatible)
-  {
     return (<Error errorType={ErrorPageTypes.screenSizeNotCompatible}/>);
-  }
-
-  const isAuth = globalContext.isAuth();
   
 
   return (
@@ -52,11 +51,11 @@ const App: React.FC = () => {
         {!roomId &&  <Route path="/" element={<Welcome />} />}
         {roomId &&  <Route path="/" element={<Welcome show_reconnect_modal={true}/>} />}
 
-        {!isAuth && <Route path="join_room/:room_id" element={<WelcomeWithRoomId />} />}
-        {isAuth && <Route path="join_room/:room_id" element={<GameboardwithRoomId />} />}
+        {!isAuthenticationValid && <Route path="join_room/:room_id" element={<WelcomeWithRoomId />} />}
+        {isAuthenticationValid && <Route path="join_room/:room_id" element={<GameboardwithRoomId />} />}
 
-        {isAuth &&  <Route path="gameboard/:room_id" element={<GameboardwithRoomId />} />}
-        {!isAuth &&  <Route path="gameboard/:room_id" element={<WelcomeWithRoomId />} />}
+        {isAuthenticationValid &&  <Route path="gameboard/:room_id" element={<GameboardwithRoomId />} />}
+        {!isAuthenticationValid &&  <Route path="gameboard/:room_id" element={<WelcomeWithRoomId />} />}
 
         <Route path="about" element={<About />} />
         <Route path="gameboard" element={<Error errorType={ErrorPageTypes.roomIdIsNotValid}/>} />
