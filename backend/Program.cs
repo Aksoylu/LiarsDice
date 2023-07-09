@@ -21,10 +21,12 @@ builder.Services.AddControllers();
 builder.Services.AddSignalR();
 
 var app = builder.Build();
+app.UseCors(x => x.AllowAnyHeader().AllowAnyMethod().WithOrigins("*"));
 
 app.UseRouting();
 app.UseAuthorization();
 app.MapControllers();
+
 
 /* Configuration for Realtime Communication */
 app.UseEndpoints(endpoints =>

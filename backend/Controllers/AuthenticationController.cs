@@ -19,12 +19,11 @@ public class AuthenticationController : ControllerBase
         _database = database;
     }
 
-    [HttpPost("/create_authentication")]
-    public ActionResult<Object> authUser()
+    [HttpPost("create_session")]
+    public ActionResult<Object> createSession()
     {
         /* Assertion for already logged in user */
         Utility.assertAuthentication(Request);
-
 
         String rawUsername = Request.Form["username"].ToString();
         String? username = String.Format("{0}#{1}", rawUsername, Utility.CreateChannelId());
@@ -54,23 +53,33 @@ public class AuthenticationController : ControllerBase
         return response;
     }
 
-    /* If user has a jwt in browser cookie, then instead login will be able invoke */
-    [HttpPost("/login")]
-    public ActionResult<Object> isAuthValid()
+
+    [HttpPost("invalidate_session")]
+    public ActionResult<Object> invalidateSession()
     {
-        /* Assertion for unanuthenticated request */
+        /* Assertion for already logged in user */
         Utility.assertUnauthentication(Request);
-        
-        /* Get is user exist */
-        String jwtToken = Request.Headers["jwt_token"].ToString();
-        Authentication? authUser = _database.getDatabase().AuthenticationTable?.FirstOrDefault(customer => customer.AuthKey == jwtToken) ?? null;
-        if(authUser == null || authUser.Username == null)
+        String authKey = Request.Headers["jwt_token"].ToString();
+
+        /* Gets users authentication instance */
+        Authentication? userSession = this._database.getUserByToken(authKey);
+        if(userSession == null)
         {
-            throw new DataException("User is not found");
+            var userSessionNotExistResponse = Utility.CreateHttpResponse("user_session_not_exist", HttpStatusCode.OK);
+            return userSessionNotExistResponse;
         }
 
-        var response = Utility.CreateHttpResponse("login_success", HttpStatusCode.OK);
-        response.Add("username", authUser.Username);
+        /* Make user leave if user is member of any room */
+        if(userSession.RoomName != null)
+        {
+            this._database.leaveRoom(userSession.RoomName, userSession);
+        }
+
+        /* Remove auth instance from db */
+        this._database.destroyUser(userSession);
+        
+        /* Send http response to client */
+        var response = Utility.CreateHttpResponse("auth_invalidation_success", HttpStatusCode.OK);
         return response;
     }
 }

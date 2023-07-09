@@ -114,6 +114,11 @@ public class DatabaseHelper{
         return this._databaseContext.AuthenticationTable?.FirstOrDefault(user => user.SocketId == socketId) ?? null;
     }
 
+    public Authentication? getUserByToken(String authToken)
+    {
+        return this._databaseContext.AuthenticationTable?.FirstOrDefault(user => user.AuthKey == authToken) ?? null;
+    }
+
     public int getLastAuthenticationUid()
     {
         return this._databaseContext.AuthenticationTable?.OrderBy(user => user.Id).LastOrDefault()?.Id ?? 0;
