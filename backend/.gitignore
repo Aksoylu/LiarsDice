@@ -1,0 +1,48 @@
+# .NET Core
+## Build artifacts
+bin/
+obj/
+
+## Visual Studio
+.vscode/
+.vs/
+*.suo
+*.user
+*.sln.docstates
+
+## Rider
+.idea/
+
+## User-specific files
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+## Logs and databases
+*.log
+*.sqlite
+
+## NuGet
+packages/
+*.nupkg
+
+## MSTest test Results
+[Test|Debug]Results/
+
+## User-specific files
+*.rsuser
+
+## .NET Core
+project.lock.json
+project.fragment.lock.json
+artifacts/
+
+## Visual Studio Code
+.vscode/
+.settings/
+.vscode/
+
+## Rider
+.idea/
+*.sln.iml

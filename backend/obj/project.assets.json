@@ -3048,25 +3048,26 @@
     ]
   },
   "packageFolders": {
-    "/Users/aksoylu/.nuget/packages/": {}
+    "C:\\Users\\mumit\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "/Users/aksoylu/private/LiarsDice/backend/backend.csproj",
+      "projectUniqueName": "C:\\Users\\mumit\\OneDrive\\Belgeler\\__REPOSITORIES__\\LiarsDice\\backend\\backend.csproj",
       "projectName": "backend",
-      "projectPath": "/Users/aksoylu/private/LiarsDice/backend/backend.csproj",
-      "packagesPath": "/Users/aksoylu/.nuget/packages/",
-      "outputPath": "/Users/aksoylu/private/LiarsDice/backend/obj/",
+      "projectPath": "C:\\Users\\mumit\\OneDrive\\Belgeler\\__REPOSITORIES__\\LiarsDice\\backend\\backend.csproj",
+      "packagesPath": "C:\\Users\\mumit\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\mumit\\OneDrive\\Belgeler\\__REPOSITORIES__\\LiarsDice\\backend\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "/Users/aksoylu/.nuget/NuGet/NuGet.Config"
+        "C:\\Users\\mumit\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
         "net7.0"
       ],
       "sources": {
-        "/usr/local/share/dotnet/sdk/7.0.305/Sdks/Microsoft.NET.Sdk.Web/library-packs": {},
+        "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
         "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {
@@ -3125,7 +3126,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/7.0.305/RuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.400\\RuntimeIdentifierGraph.json"
       }
     }
   }
