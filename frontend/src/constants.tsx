@@ -62,6 +62,8 @@ export const LanguageSelectorTheme = {
 
 export const SignalIrEvents = {
     JOIN_ROOM: "joinRoom",
+    LEAVE_ROOM: "leaveRoom",
     CREATE_ROOM: "createRoom",
+    RECONNECT_ROOM: "reconnectRoom",
     LOGOUT:"socketLogout",
 }

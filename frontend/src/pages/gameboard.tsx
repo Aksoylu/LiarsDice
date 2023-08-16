@@ -1,5 +1,5 @@
 import React, {ReactNode, useEffect, useState} from 'react';
-import svgImage from '../assets/board.svg';
+import greenBackgroundImage from '../assets/board.svg';
 import "./gameboard.css";
 
 import ChatBox from '../components/chatBox';
@@ -114,15 +114,21 @@ const renderActionPanel = (username:string, isGameStarted:boolean, isUserElimina
   }
 }
 
+// todo: check room is exist or available
 const GameBoard: React.FC<GameboardProps> = ({ room_id }) => {  
-  const username = useSelector((state:InitialStore) => state.username)
+  const dispatch = useDispatch();
+
+  const storageUsername = useSelector((state:InitialStore) => state.username);
+  const storageAuthKey = useSelector((state:InitialStore) => state.authKey);
+  
   const isTurn = useSelector((state:InitialStore) => state.isTurn);
-  const isUserEliminated = useSelector((state:InitialStore) => state.isUserEliminated);
-  const isGameStarted = useSelector((state:InitialStore) => state.isGameStarted);
-  const isSelfAdmin = useSelector((state:InitialStore) => state.isSelfAdmin);
+  const storageIsUserEliminated = useSelector((state:InitialStore) => state.isUserEliminated);
+  const storageIsGameStarted = useSelector((state:InitialStore) => state.isGameStarted);
+  const storageIsSelfAdmin = useSelector((state:InitialStore) => state.isSelfAdmin);
+  const storageIsTurn = useSelector((state:InitialStore) => state.isTurn);
+
   const roomPlayers = useSelector((state:InitialStore) => state.roomPlayers);
 
-  const dispatch = useDispatch();
 
   const setIsTurn = (value:boolean) => {
     dispatch({ type: 'SET_IS_TURN', payload:value});
@@ -198,11 +204,11 @@ const GameBoard: React.FC<GameboardProps> = ({ room_id }) => {
   
   return (
     <div>
-      <Navbar isGameStarted={isGameStarted} isAdmin={isSelfAdmin}/>
-        <img className='backgroundImage' src={svgImage} />
+      <Navbar/>
+        <img className='backgroundImage' src={greenBackgroundImage} />
       
       <div className='signalContainer'>
-        {pushSignal(username)}
+        {pushSignal(storageUsername)}
       </div>
       <div className="board-container">
           <div className="row">
@@ -231,7 +237,7 @@ const GameBoard: React.FC<GameboardProps> = ({ room_id }) => {
             <br/>
             <div className="row">
               <div className='col-12'>
-                {renderActionPanel(username, isGameStarted, isUserEliminated, isTurn)}
+                {renderActionPanel(storageAuthKey, storageIsGameStarted, storageIsUserEliminated, storageIsTurn)}
               </div>
             </div>
       </div>

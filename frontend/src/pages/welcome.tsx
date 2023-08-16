@@ -6,7 +6,7 @@ import {LanguageSelectorTheme, SignalIrEvents} from "../constants";
 
 import LanguageSelector from "../components/languageSelector";
 import './welcome.css';
-import svgImage from '../assets/board.svg';
+import greenBackgroundImage from '../assets/board.svg';
 
 import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
@@ -19,7 +19,6 @@ const { getTranslationInstance } = require("../translations/translate");
 
 interface WelcomeProps {
   room_id?: string;
-  show_reconnect_modal?: boolean;
 }
 const WARN_MESSAGE_TYPES = {
   "ERROR": "errorText",
@@ -28,99 +27,22 @@ const WARN_MESSAGE_TYPES = {
   "SUCCESS": "successText",
 };
 
-// todo reconnect mechanism fix
-const createReconnectModal = async (roomId:string, translation:any, dispatch:any) => {
-  if(!roomId)
-    return;
-  
-  const modalResult = await swal.fire({
-    backdrop: `
-        url(${svgImage})
-        center
-        repeat
-    `,
-    title: translation.get("modal_reconnect_title"),
-    html: <div>
-      <b>{translation.get("modal_reconnect_subtitle")}</b>
-      <p>{translation.get("modal_reconnect_content")}</p>
-    </div>,
-    showCancelButton: true,
-    confirmButtonText: translation.get("modal_reconnect_accept_button"),
-    cancelButtonText:  translation.get("modal_reconnect_decline_button"),
-  });
-
-  if(modalResult.dismiss === Swal.DismissReason.cancel)
-  {
-    dispatch({ type: 'SET_ROOM_ID', payload:null});
-  }
-  else if(modalResult.isConfirmed)
-  {
-    window.location.href = "/gameboard/" + roomId;
-  }
-}
-
-/* ===== CREATE SESSION ===== */
-const createSessionModal = async (translation:any, dispatch:any) => {
-  let usernameInput:HTMLInputElement;
-
-  const modal = swal.fire({
-    allowOutsideClick:false,
-    allowEscapeKey: false,
-    backdrop: `
-        url(${svgImage})
-        center
-        repeat
-    `,
-    title: translation.get("modal_create_session_title"),
-    html: <div>
-      <p>{translation.get("modal_create_session_subtitle")}</p>
-      <input type="text" id="username" className="swal2-input" placeholder="Enter your username"></input>
-    </div>,
-    confirmButtonText: translation.get("modal_create_session_accept_button"),
-    preConfirm: () => {
-      usernameInput = document.getElementById("username") as HTMLInputElement;
-      if(!usernameInput.value || usernameInput.value.length < 3)
-        return false;
-    },
-  });
-
-  const modalResult = await modal;
-  if(modalResult.isConfirmed)
-  {
-    usernameInput = document.getElementById("username") as HTMLInputElement;
-    const authResponse = await httpService.createAuthentication(usernameInput.value);
-
-    if(!authResponse)
-      return window.location.reload();
-
-    dispatch({ type: 'SET_AUTH_KEY', payload:authResponse.auth_token});
-    dispatch({ type: 'SET_USERNAME', payload:authResponse.username});
-    window.location.reload();
-  }
-}
-
-const Welcome: React.FC<WelcomeProps> = ({ room_id, show_reconnect_modal }) => {
+const Welcome: React.FC<WelcomeProps> = ({ room_id }) => {
   const dispatch = useDispatch();
 
   const storageUsername = useSelector((state:InitialStore) => state.username);
   const storageAuthKey = useSelector((state:InitialStore) => state.authKey);
-  const storageLanguage = useSelector((state:InitialStore) => state.language)
+  const storageLanguage = useSelector((state:InitialStore) => state.language);
+  const storageRoomId = useSelector((state:InitialStore) => state.roomId);
+
+  const translation = getTranslationInstance(storageLanguage);
 
   const [username, setUsername] = useState(storageUsername);
   const [roomId, setRoomId] = useState(room_id ?? "");
   const [warnMessageType, setWarnMessageType] = useState(WARN_MESSAGE_TYPES.ERROR);
   const [warnMessage, setWarnMessage] = useState("");
 
-  const [isAuthenticationValid, setIsAuthenticationValid] = useState(storageUsername != null && storageAuthKey != null);
-  const [isReconnectModalActive, setIsReconnectModalActive] = useState(show_reconnect_modal);
-
-  const translation= getTranslationInstance(storageLanguage);
-
-  if(!isAuthenticationValid)
-    createSessionModal(translation, dispatch);
-
-  if(isReconnectModalActive)
-    createReconnectModal(roomId, translation, dispatch);
+  const isReconnectButtonActive = storageUsername != null && storageAuthKey != null && storageRoomId != null;
 
   const panelSwitchToCreateRoom = () => {
     const container = document.getElementById('container');
@@ -136,32 +58,105 @@ const Welcome: React.FC<WelcomeProps> = ({ room_id, show_reconnect_modal }) => {
       setWarnMessage("");
   }
 
+  const renderRightPanel = () => {
+
+    if(isReconnectButtonActive)
+    {
+      return (
+        <div className="overlay-panel overlay-right">
+          <h1>{translation.get("general_title")}</h1>
+          <p>
+            {translation.get("welcome_title")},
+            <b> {username}</b>
+            <br />
+            { translation.get("reconnect_room_subtitle") }
+          </p>
+          <button className="ghost" onClick={reconnectRoomAction}>{translation.get("reconnect_room_button")}</button>
+          <button className="ghost logout_button" onClick={abaddonRoomAction}>{translation.get("abaddon_room_button_text")}</button>
+        </div>
+      ); 
+    }
+    
+    return (
+      <div className="overlay-panel overlay-right">
+        <h1>{translation.get("general_title")}</h1>
+        <p>
+          {translation.get("welcome_title")},
+          <b> {username}</b>
+          <br />
+          { translation.get("welcome_subtitle")}
+        </p>
+        <button className="ghost" onClick={panelSwitchToCreateRoom}>{translation.get("create_room_button_text")}</button>
+        <button className="ghost logout_button" onClick={logoutAction}>{translation.get("logout_button_text")}</button>
+      </div>
+    );
+
+  }
+
   useEffect(() => {
     if (username != storageUsername) {
       setUsername(storageUsername);
     }
   }, [storageUsername]);
 
+  /* ===== RECONNECT ROOM ===== */
+  const reconnectRoomAction = () => {
+    if(storageAuthKey == null || storageRoomId == null || storageRoomId == null)
+      return false;
+
+    signalIrService.triggerEvent(SignalIrEvents.RECONNECT_ROOM, [storageAuthKey, storageRoomId]);
+  }
+
+  signalIrService.listenEvent(SignalIrEvents.RECONNECT_ROOM, (data:any) => {
+    if(data.event == "room_reconnect_success" && data?.room_name != null)
+    {
+      signalIrService.stopListenEvent(SignalIrEvents.JOIN_ROOM);
+      dispatch({ type: 'SET_ROOM_ID', payload:data.room_name});
+      window.location.href = "/gameboard/" + data.room_name;
+    }
+    else
+    {
+      setWarnMessageType(WARN_MESSAGE_TYPES.ERROR);
+      setWarnMessage(translation.get("error_" + data.event));
+    }
+  });
+
+    /* ===== ABADDON ROOM ===== */
+    const abaddonRoomAction = () => {
+      if(storageAuthKey == null || storageRoomId == null || storageRoomId == null)
+        return false;
+  
+      signalIrService.triggerEvent(SignalIrEvents.LEAVE_ROOM, [storageAuthKey, storageRoomId]);
+    }
+  
+    signalIrService.listenEvent(SignalIrEvents.LEAVE_ROOM, (data:any) => {
+      if(data.event == "leave_room_success")
+      {
+        signalIrService.stopListenEvent(SignalIrEvents.LEAVE_ROOM);
+        dispatch({ type: 'LEAVE_ROOM'});
+        window.location.reload();
+      }
+      else
+      {
+        setWarnMessageType(WARN_MESSAGE_TYPES.ERROR);
+        setWarnMessage(translation.get("error_" + data.event));
+      }
+    });
+  
   /* ===== JOIN ROOM ===== */
   const joinRoomAction = () => {
     if(storageAuthKey == null || roomId == null)
-        return false;
+      return false;
 
     signalIrService.triggerEvent(SignalIrEvents.JOIN_ROOM, [storageAuthKey, roomId]);
   }
 
   signalIrService.listenEvent(SignalIrEvents.JOIN_ROOM, (data:any) => {
-    if(data.event == "room_join_success")
+    if(data.event == "room_join_success" || data.event == "user_already_room_member")
     {
       signalIrService.stopListenEvent(SignalIrEvents.JOIN_ROOM);
       dispatch({ type: 'SET_ROOM_ID', payload:roomId});
-      window.location.href = "/join_room/" + roomId;
-    }
-    else if(data.event == "user_already_room_member")
-    {
-      signalIrService.stopListenEvent(SignalIrEvents.JOIN_ROOM);
-      dispatch({ type: 'SET_ROOM_ID', payload:roomId});
-      window.location.href = "/join_room/" + roomId;
+      window.location.href = "/gameboard/" + roomId;
     }
     else
     {
@@ -184,7 +179,7 @@ const Welcome: React.FC<WelcomeProps> = ({ room_id, show_reconnect_modal }) => {
     {
       signalIrService.stopListenEvent(SignalIrEvents.CREATE_ROOM);
       dispatch({ type: 'SET_ROOM_ID', payload:roomId});
-      window.location.href = "/join_room/" + roomId;
+      window.location.href = "/gameboard/" + roomId;
     }
     else
     {
@@ -252,17 +247,7 @@ const Welcome: React.FC<WelcomeProps> = ({ room_id, show_reconnect_modal }) => {
               <p>{translation.get("is_someone_waiting_you")}</p>
               <button className="ghost" onClick={panelSwitchToJoinRoom}>{translation.get("join_room_button")}</button>
             </div>
-            <div className="overlay-panel overlay-right">
-              <h1>{translation.get("general_title")}</h1>
-              <p>
-                {translation.get("welcome_title")},
-                &nbsp;<b>{username}</b>
-                <br/>
-                {translation.get("welcome_subtitle")
-              }</p>
-              <button className="ghost" onClick={panelSwitchToCreateRoom}>{translation.get("create_room_button_text")}</button>
-              {isAuthenticationValid && <button className="ghost logout_button" onClick={logoutAction}>{translation.get("logout_button_text")}</button>}
-            </div>
+            {renderRightPanel()}
           </div>
         </div>
       </div>

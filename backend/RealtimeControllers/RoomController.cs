@@ -125,7 +125,7 @@ public partial class InitialController : Hub
         if(user == null || user.Username == null)
         {
             var userNotFoundSignal = Utility.CreateHubSignal("authentication_failed");
-            await Clients.Client(Context.ConnectionId).SendAsync(SignalTypes.PrivateSignal, userNotFoundSignal);
+            await Clients.Client(Context.ConnectionId).SendAsync(SignalTypes.ReconnectRoomSignal, userNotFoundSignal);
             return;
         }
         _database.updateUserSocket(user, Context.ConnectionId);
@@ -136,7 +136,7 @@ public partial class InitialController : Hub
         if(currentRoom == null)
         {
             var roomNotExistSignal = Utility.CreateHubSignal("room_not_exist");
-            await Clients.Client(Context.ConnectionId).SendAsync(SignalTypes.PrivateSignal, roomNotExistSignal);
+            await Clients.Client(Context.ConnectionId).SendAsync(SignalTypes.ReconnectRoomSignal, roomNotExistSignal);
             return;
 
         }
@@ -146,7 +146,7 @@ public partial class InitialController : Hub
         if(roomPlayer == null)
         {
             var playerNotExistInRoom = Utility.CreateHubSignal("player_not_exist_in_room");
-            await Clients.Client(Context.ConnectionId).SendAsync(SignalTypes.PrivateSignal, playerNotExistInRoom);
+            await Clients.Client(Context.ConnectionId).SendAsync(SignalTypes.ReconnectRoomSignal, playerNotExistInRoom);
             return;
         }
 
@@ -156,8 +156,8 @@ public partial class InitialController : Hub
 
         /* Send success signal to user. This signal also contains current game room status */
         var privateSignal = Utility.CreateHubSignal("room_reconnect_success");
-        privateSignal.Add("room_users", JsonSerializer.Serialize(currentRoom.RoomPlayers));
-        await Clients.Client(Context.ConnectionId).SendAsync(SignalTypes.PrivateSignal, privateSignal);
+        privateSignal.Add("room_name", roomName);
+        await Clients.Client(Context.ConnectionId).SendAsync(SignalTypes.ReconnectRoomSignal, privateSignal);
 
         /* Send user reconnect signal to all remain users in room */
         var roomWideSignal = Utility.CreateHubSignal("user_reconnected");
@@ -175,7 +175,7 @@ public partial class InitialController : Hub
         if(user == null || user.Username == null)
         {
             var userNotFoundSignal = Utility.CreateHubSignal("authentication_failed");
-            await Clients.Client(Context.ConnectionId).SendAsync(SignalTypes.PrivateSignal, userNotFoundSignal);
+            await Clients.Client(Context.ConnectionId).SendAsync(SignalTypes.LeaveRoomSignal, userNotFoundSignal);
             return;
         }
         _database.updateUserSocket(user, Context.ConnectionId);
@@ -184,7 +184,7 @@ public partial class InitialController : Hub
         if(!this._database.isRoomExist(roomName))
         {
             var roomNotFoundSignal = Utility.CreateHubSignal("room_not_found");
-            await Clients.Client(Context.ConnectionId).SendAsync(SignalTypes.PrivateSignal, roomNotFoundSignal);
+            await Clients.Client(Context.ConnectionId).SendAsync(SignalTypes.LeaveRoomSignal, roomNotFoundSignal);
             return;
         }
 
@@ -193,7 +193,7 @@ public partial class InitialController : Hub
         if(!removeSuccess)
         {
             var roomNotFoundSignal = Utility.CreateHubSignal("already_not_a_room_player");
-            await Clients.Client(Context.ConnectionId).SendAsync(SignalTypes.PrivateSignal, roomNotFoundSignal);
+            await Clients.Client(Context.ConnectionId).SendAsync(SignalTypes.LeaveRoomSignal, roomNotFoundSignal);
             return;
         }
 
@@ -201,8 +201,8 @@ public partial class InitialController : Hub
         await Groups.RemoveFromGroupAsync(Context.ConnectionId, roomName);
 
         /* Send successfully leave signal to user. */
-        var privateSignal = Utility.CreateHubSignal("room_leave_success");
-        await Clients.Client(Context.ConnectionId).SendAsync(SignalTypes.PrivateSignal, privateSignal);
+        var privateSignal = Utility.CreateHubSignal("leave_room_success");
+        await Clients.Client(Context.ConnectionId).SendAsync(SignalTypes.LeaveRoomSignal, privateSignal);
 
         /* Send user leave signal to all remain users in room */
         var roomWideSignal = Utility.CreateHubSignal("user_leaved");
@@ -229,7 +229,7 @@ public partial class InitialController : Hub
                 /* Send set admin signal to user. */
                 var setAdminPrivateSignal = Utility.CreateHubSignal("set_admin");
                 if(randomPlayer.SocketId != null)
-                    await Clients.Client(randomPlayer.SocketId).SendAsync(SignalTypes.PrivateSignal, setAdminPrivateSignal);
+                    await Clients.Client(randomPlayer.SocketId).SendAsync(SignalTypes.LeaveRoomSignal, setAdminPrivateSignal);
 
                 /* Send new admin signal to all remain users in room */
                 var setAdminRoomWideSignal = Utility.CreateHubSignal("new_admin");
@@ -241,5 +241,45 @@ public partial class InitialController : Hub
                 this._database.destroyRoom(currentRoom);
             }
         }
+    }
+    // todo invoke from gameboard initial
+    public async Task getRoomDetails(string jwtToken, string roomName)
+    {
+        /* Auth user */
+        Authentication? user = _database.tokenAuth(jwtToken);
+        if(user == null || user.Username == null)
+        {
+            var userNotFoundSignal = Utility.CreateHubSignal("authentication_failed");
+            await Clients.Client(Context.ConnectionId).SendAsync(SignalTypes.GetRoomDetailsSignal, userNotFoundSignal);
+            return;
+        }
+        _database.updateUserSocket(user, Context.ConnectionId);
+
+
+        /* Check room is exist by room name */
+        GameRoom? currentRoom = this._database.getRoomByName(roomName);
+        if(currentRoom == null)
+        {
+            var roomNotExistSignal = Utility.CreateHubSignal("room_not_exist");
+            await Clients.Client(Context.ConnectionId).SendAsync(SignalTypes.GetRoomDetailsSignal, roomNotExistSignal);
+            return;
+
+        }
+
+        /* Get room player by room and user info */
+        RoomPlayer? roomPlayer = this._database.getRoomPlayerByName(currentRoom, user);
+        if(roomPlayer == null)
+        {
+            var playerNotExistInRoom = Utility.CreateHubSignal("player_not_exist_in_room");
+            await Clients.Client(Context.ConnectionId).SendAsync(SignalTypes.GetRoomDetailsSignal, playerNotExistInRoom);
+            return;
+        }
+
+        /* Update auth and room player instances */
+        this._database.updateUserSocket(user, Context.ConnectionId);
+
+        /* Send success signal to user. This signal also contains current game room status */
+        var privateSignal = Utility.CreateHubSignal("room_details");
+        await Clients.Client(Context.ConnectionId).SendAsync(SignalTypes.GetRoomDetailsSignal, privateSignal);
     }
 }

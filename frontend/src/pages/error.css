@@ -17,8 +17,12 @@
 	text-align: center;
 	margin-left: 5%;
 	margin-right: 5%;
-
   }
+
+.safeUrl{
+	text-decoration: underline;
+	cursor: pointer;
+}
 
 .errorLogo{
 	margin-bottom: 32px;

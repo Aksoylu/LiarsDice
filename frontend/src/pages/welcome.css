@@ -282,3 +282,21 @@ footer a {
 .successText{
 	color: #42cb74;
 }
+
+.create-session-modal-body {
+	width: 100%;
+	text-align: center; /* For inline elements */
+	/* OR */
+	margin: 0 auto;
+}
+
+.reconnect-button
+{
+	text-decoration: underline;
+	cursor:pointer;
+}
+
+.reconnect-button:hover
+{
+	color: #42cb74;
+}

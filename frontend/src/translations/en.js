@@ -5,10 +5,15 @@ const ENGLISH = {
     "create_room_button_text": "Create New Room",
     "logout_button_text": "Logout",
     "logout_success_text": "You have successfully logged out",
-
+    
     "join_room_header": "Join Room",
     "join_room_subtitle": "Just by using Room Id",
     "join_room_button": "Join Room",
+    "reconnect_room_button": "Reconnect Game",
+    "reconnect_room_subtitle": `Looks like you are already a member of room. Do you want to reconnect back ?`,
+
+    "abaddon_room_button_text": "Abaddon Game",
+
 
     "error_already_joined_room_name": "You are already member of this room. If you want to reconnect, please click :",
     "error_room_not_exist": "Room not exist",
@@ -47,7 +52,7 @@ const ENGLISH = {
 
     "info_panel_waiting_for_game_start": "Waiting for game start",
     "info_panel_eliminated": "You are eliminated !",
-    "info_panel_subtitle_waiting_for_game_start": "You are waiting game to start with other players. Room admin could able to start game when everyone is ready.",
+    "info_panel_subtitle_waiting_for_game_start": "You are waiting game to start with other players. Room manager can start the game when there is more than one player in the room",
     "info_panel_subtitle_eliminated": "You lost your all dices. So, you are not able to declare bid or taking any action until next game.",
 
     "modal_how_to_play_title_1": "How to Play Liar's Dice",
@@ -135,15 +140,24 @@ const ENGLISH = {
     "button_next": "Next",
     "button_ok": "OK",
 
-    "modal_reconnect_title": "Liar's Dice",
-    "modal_reconnect_subtitle": "Reconnect Previous Room ?",
-    "modal_reconnect_content": "Looks like you are already joined a room, do you want to reconnect back ?",
-    "modal_reconnect_accept_button": "Yes, reconnect",
-    "modal_reconnect_decline_button": "No",
+    "modal_leave_room_title": "Do you want to leave room ?",
+    "modal_leave_room_subtitle": "Of course you can join back later ...",
+    "modal_leave_room_accept_button": "Yes",
+    "modal_leave_room_decline_button": "No",
 
-    "modal_create_session_title": "Liar's Dice",
+    "modal_leave_room_for_empty_room_subtitle": "Looks like there is no one here except you. This room will deleted if you leave. ",
+    "modal_leave_room_for_admin_subtitle": "Looks like you are room admin. If you leave room once, you will lose admin rights forever ",
+
+    "modal_create_session_title": "Welcome To Liar's Dice",
     "modal_create_session_subtitle": "Create your account. No email or another additional information needed !",
     "modal_create_session_accept_button": "Create Account",
+    
+    "modal_server_stastus_failure_title": "Welcome To Liar's Dice",
+    "modal_server_stastus_failure_subtitle": "Unfortunately, Liar's Dice server is not accessible for now. Please retry from here 👇",
+    "modal_server_stastus_failure_retry_button": "Retry",
+
+    "modal_loading_title": "Loading . . .",
+    "modal_loading_subtitle": "Connecting to Liar's Dice Servers",
 
 
 }

@@ -50,12 +50,16 @@ class HttpService {
         this.headers.jwt_token = authKey;
 
         const response = await this._sendPost(`authentication/invalidate_session`, null);
-        console.log(response);
 
         if(response.status != "OK" || response.message != "auth_invalidation_success")
             return null;
 
         return true;
+    }
+
+    async checkStatus(){
+        const response = await this._sendGet("check_status");
+        return (response == "status_online");
     }
 
     /**
@@ -75,6 +79,29 @@ class HttpService {
 
         return null;
     }
+
+    /**
+     * @private
+     * @description: Sends get request to backend
+     * @param endpoint 
+     */
+    async _sendGet(endpoint:string){
+        try
+        {
+            const config = {headers: this.headers};
+            const response = await axios.get(`${this.baseUrl}/${endpoint}`, config);
+
+            if(response.status == axios.HttpStatusCode.Ok)
+                return response.data
+
+            return null;
+        }
+        catch(e)
+        {
+            return null;
+        }
+    }
+
 
     /**
      * @private

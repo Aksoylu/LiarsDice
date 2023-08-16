@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "c:\\Users\\mumit\\OneDrive\\Belgeler\\__REPOSITORIES__\\LiarsDice\\backend\\backend.csproj": {}
+    "C:\\Users\\mumit\\OneDrive\\Belgeler\\__REPOSITORIES__\\LiarsDice\\backend\\backend.csproj": {}
   },
   "projects": {
-    "c:\\Users\\mumit\\OneDrive\\Belgeler\\__REPOSITORIES__\\LiarsDice\\backend\\backend.csproj": {
+    "C:\\Users\\mumit\\OneDrive\\Belgeler\\__REPOSITORIES__\\LiarsDice\\backend\\backend.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "c:\\Users\\mumit\\OneDrive\\Belgeler\\__REPOSITORIES__\\LiarsDice\\backend\\backend.csproj",
+        "projectUniqueName": "C:\\Users\\mumit\\OneDrive\\Belgeler\\__REPOSITORIES__\\LiarsDice\\backend\\backend.csproj",
         "projectName": "backend",
-        "projectPath": "c:\\Users\\mumit\\OneDrive\\Belgeler\\__REPOSITORIES__\\LiarsDice\\backend\\backend.csproj",
+        "projectPath": "C:\\Users\\mumit\\OneDrive\\Belgeler\\__REPOSITORIES__\\LiarsDice\\backend\\backend.csproj",
         "packagesPath": "C:\\Users\\mumit\\.nuget\\packages\\",
-        "outputPath": "c:\\Users\\mumit\\OneDrive\\Belgeler\\__REPOSITORIES__\\LiarsDice\\backend\\obj\\",
+        "outputPath": "C:\\Users\\mumit\\OneDrive\\Belgeler\\__REPOSITORIES__\\LiarsDice\\backend\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\mumit\\AppData\\Roaming\\NuGet\\NuGet.Config",

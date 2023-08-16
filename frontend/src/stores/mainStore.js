@@ -31,13 +31,16 @@ const rootReducer = (state = initialState, action) => {
       localStorage.removeItem("auth_key");
 
       return {
-       ...initialState
+       ...initialState,
+       username: null,
+       roomId: null,
+       authKey: null
       }
     
     case "SET_LANGUAGE":
       localStorage.setItem("user_lang", action.payload);
       return {
-        ...initialState,
+        ...state,
         language: action.payload
       }
 
@@ -126,7 +129,13 @@ const rootReducer = (state = initialState, action) => {
         ...state,
         roomPlayers: newRoomPlayers
       }
-    
+    case "LEAVE_ROOM":
+      localStorage.removeItem("room_id");
+      
+      return {
+        ...state,
+        roomId: null,
+      }
     default:
       return state;
   }

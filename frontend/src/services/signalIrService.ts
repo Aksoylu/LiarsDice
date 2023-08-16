@@ -51,6 +51,7 @@ class SignalIrService {
     }
 
     triggerEvent(event:string, params:Array<any>){
+        console.log("triggered event: " + event);
         this.connection.invoke(event, ...params);
     }
 
